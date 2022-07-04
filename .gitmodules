@@ -1,0 +1,18 @@
+[submodule "ait"]
+	path = ait
+	url = ../ait.git
+[submodule "extrae"]
+	path = extrae
+	url = ../extrae.git
+[submodule "mcxx"]
+	path = mcxx
+	url = ../mcxx.git
+[submodule "nanos6-fpga"]
+	path = nanos6-fpga
+	url = ../nanos6-fpga.git
+[submodule "xdma"]
+	path = xdma
+	url = ../xdma.git
+[submodule "xtasks"]
+	path = xtasks
+	url = ../xtasks.git
