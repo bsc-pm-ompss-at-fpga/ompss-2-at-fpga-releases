@@ -1,6 +1,7 @@
 [submodule "ait"]
 	path = ait
 	url = https://pm.bsc.es/gitlab/ompss-at-fpga/ait.git
+	branch = master-public
 [submodule "extrae"]
 	path = extrae
 	url = https://pm.bsc.es/gitlab/ompss-at-fpga/extrae.git
@@ -16,3 +17,6 @@
 [submodule "xtasks"]
 	path = xtasks
 	url = https://pm.bsc.es/gitlab/ompss-at-fpga/xtasks.git
+[submodule "ompss-at-fpga-kernel-module"]
+	path = ompss-at-fpga-kernel-module
+	url = https://pm.bsc.es/gitlab/ompss-at-fpga/ompss-at-fpga-kernel-module.git
