@@ -25,7 +25,7 @@ ifndef MCXX_NAME
 endif
 
 ifndef ENVSCRIPT_NAME
-	ENVSCRIPT_NAME := environment_ompss2_fpga.sh
+	ENVSCRIPT_NAME := environment_ompss_2_fpga.sh
 endif
 
 export CROSS_COMPILE := $(TARGET)-
@@ -63,10 +63,11 @@ nanos6-config-force: nanos6-bootstrap
 	cd nanos6-build;	\
 	../nanos6-fpga/configure --prefix=$(PREFIX_TARGET)/nanos6 \
 		--host=$(TARGET) \
-		--with-xtasks=$(PREFIX_TARGET)/libxtasks \
+		--enable-fpga --with-xtasks=$(PREFIX_TARGET)/libxtasks \
+		--with-symbol-resolution=indirect \
 		$(WITH_EXTRAE) \
-		--disable-allocator --disable-memtracker \
-		--disable-resiliency
+		--disable-all-instrumentations --disable-discrete-deps \
+		$(NANOS6_CONFIG_FLAGS)
 
 nanos6-config:
 	if [ ! -r nanos6-build/config.status ]; \
@@ -98,9 +99,9 @@ mcxx-config-force: mcxx-bootstrap
 		--prefix=$(PREFIX_HOST)/$(MCXX_NAME) \
 		--with-nanos6=$(PREFIX_TARGET)/nanos6 \
 		--target=$(TARGET) \
-		--enable-ompss2 \
-		--enable-nanos6-fpga-device \
-		--disable-vectorization
+		--enable-ompss-2 \
+		--disable-vectorization \
+		$(MCXX_CONFIG_FLAGS)
 
 mcxx-build: mcxx-config
 	$(MAKE) -C mcxx-build -j$(BUILDCPUS)
@@ -111,17 +112,19 @@ mcxx-install: mcxx-build
 .PHONY: ait-install
 
 ait-install:
-	cd ait; \
-	./install.sh $(PREFIX_HOST)/ait all
+	export DEB_PYTHON_INSTALL_LAYOUT=deb_system; \
+	rm -rf $(PREFIX_HOST)/ait; \
+	python3 -m pip install ./ait -t $(PREFIX_HOST)/ait
 
-.PHONY: environment_ompss2_fpga.sh envscript-install
+.PHONY: environment_ompss_2_fpga.sh envscript-install
 
-environment_ompss2_fpga.sh:
-	@echo "#!/bin/bash" >environment_ompss2_fpga.sh
-	@echo 'export PATH=$$PATH:'$(PREFIX_HOST)'/'$(MCXX_NAME)'/bin' >>environment_ompss2_fpga.sh
-	@echo 'export PATH=$$PATH:'$(PREFIX_HOST)'/ait' >>environment_ompss2_fpga.sh
+environment_ompss_2_fpga.sh:
+	@echo "#!/bin/bash" >environment_ompss_2_fpga.sh
+	@echo 'export PATH=$$PATH:'$(PREFIX_HOST)'/'$(MCXX_NAME)'/bin' >>environment_ompss_2_fpga.sh
+	@echo 'export PATH=$$PATH:'$(PREFIX_HOST)'/ait/bin' >>environment_ompss_2_fpga.sh
+	@echo 'export PYTHONPATH='$(PREFIX_HOST)'/ait' >>environment_ompss_2_fpga.sh
 
-envscript-install: environment_ompss2_fpga.sh
+envscript-install: environment_ompss_2_fpga.sh
 	cp -v $^ $(PREFIX_HOST)/$(ENVSCRIPT_NAME)
 
 .PHONY: clean mrproper
@@ -131,7 +134,7 @@ clean:
 	if [ -d nanos6-build ]; then $(MAKE) -C nanos6-build clean; fi
 	$(MAKE) -C xdma/src/$(PLATFORM) clean
 	$(MAKE) -C xtasks/src/$(PLATFORM) clean
-	rm -f environment_ompss2_fpga.sh 2>/dev/null
+	rm -f environment_ompss_2_fpga.sh 2>/dev/null
 
 mrproper: clean
 	rm -rf mcxx-build 2>/dev/null
@@ -143,14 +146,14 @@ help:
 	@echo "Environment variables:"
 	@echo "  TARGET               Linux architecture that toolchain will target [def: native]"
 	@echo "  PLATFORM             Fallback board platform that xtasks and xdma backends will target if no specific one has been defined (e.g. zynq, qdma) [def: zynq]"
-	@echo "  XDMA_PLATFORM        Board platform that xtasks and xdma backends will target (e.g. zynq, qdma) [def: PLATFORM]"
-	@echo "  XTASKS_PLATFORM      Board platform that xtasks backend will target (e.g. zynq, qdma, euroexa_testbed2) [def: PLATFORM]"
+	@echo "  XDMA_PLATFORM        Board platform that xdma backend will target (e.g. zynq, qdma, euroexa_maxilink) [def: PLATFORM]"
+	@echo "  XTASKS_PLATFORM      Board platform that xtasks backend will target (e.g. zynq, qdma) [def: PLATFORM]"
 	@echo "  PREFIX_HOST          Installation prefix for the host tools (e.g. mcxx, ait) [def: /]"
 	@echo "  PREFIX_TARGET        Installation prefix for the target tools (e.g. nanos6, libxdma) [def: /]"
 	@echo "  EXTRAE_HOME          Extrae installation path"
 	@echo "  BUILDCPUS            Number of processes used for building [def: nproc]"
 	@echo "  MCXX_NAME            Mercurium installation path within PREFIX_HOST [def: mcxx]"
-	@echo "  ENVSCRIPT_NAME       Environment script name within PREFIX_HOST [def: environment_ompss2_fpga.sh]"
+	@echo "  ENVSCRIPT_NAME       Environment script name within PREFIX_HOST [def: environment_ompss_2_fpga.sh]"
 	@echo "Targets:"
 	@echo "  xdma                 Build xdma library"
 	@echo "  xdma-install         Install xdma library"
