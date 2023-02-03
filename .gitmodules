@@ -1,22 +1,22 @@
-[submodule "ait"]
-	path = ait
-	url = https://pm.bsc.es/gitlab/ompss-at-fpga/ait.git
-	branch = master-public
-[submodule "extrae"]
-	path = extrae
-	url = https://pm.bsc.es/gitlab/ompss-at-fpga/extrae.git
-[submodule "mcxx"]
-	path = mcxx
-	url = https://pm.bsc.es/gitlab/ompss-at-fpga/mcxx.git
-[submodule "nanos6-fpga"]
-	path = nanos6-fpga
-	url = https://pm.bsc.es/gitlab/nanos6/forks/nanos6-fpga.git
 [submodule "xdma"]
 	path = xdma
-	url = https://pm.bsc.es/gitlab/ompss-at-fpga/xdma.git
+	url = ../xdma.git
 [submodule "xtasks"]
 	path = xtasks
-	url = https://pm.bsc.es/gitlab/ompss-at-fpga/xtasks.git
+	url = ../xtasks.git
+[submodule "nanos6-fpga"]
+	path = nanos6-fpga
+	url = git@bscpm03.bsc.es:nanos6/forks/nanos6-fpga.git
+[submodule "mcxx"]
+	path = mcxx
+	url = ../mcxx.git
+[submodule "extrae"]
+	path = extrae
+	url = ../extrae.git
 [submodule "ompss-at-fpga-kernel-module"]
 	path = ompss-at-fpga-kernel-module
-	url = https://pm.bsc.es/gitlab/ompss-at-fpga/ompss-at-fpga-kernel-module.git
+	url = ../ompss-at-fpga-kernel-module.git
+[submodule "ait"]
+	path = ait
+	url = ../ait.git
+	branch = master-public
