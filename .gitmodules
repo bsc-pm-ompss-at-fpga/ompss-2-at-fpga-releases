@@ -6,7 +6,7 @@
 	url = ../xtasks.git
 [submodule "nanos6-fpga"]
 	path = nanos6-fpga
-	url = git@bscpm03.bsc.es:nanos6/forks/nanos6-fpga.git
+	url = ../nanos6-fpga.git
 [submodule "mcxx"]
 	path = mcxx
 	url = ../mcxx.git
