@@ -15,7 +15,7 @@ This repository uses submodules to link against the different OmpSs-2@FPGA tools
 ```
 
 To obtain further information about each tool, visit the README of each tool.
-For general information, visit the [OmpSs-2@FPGA User Guide](https://pm.bsc.es/ftp/ompss-2-at-fpga/doc/user-guide-1.0.0/index.html#ompss-2-fpga-user-guide).
+For general information, visit the [OmpSs-2@FPGA User Guide](https://pm.bsc.es/ftp/ompss-2-at-fpga/doc/user-guide-1.0.1-rc1/index.html#ompss-2-fpga-user-guide).
 
 
 ### Build docker image
