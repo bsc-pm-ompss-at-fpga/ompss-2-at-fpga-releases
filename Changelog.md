@@ -1,15 +1,15 @@
-# Release 1.0.1-rc1
-2023-03-03
+# Release 1.0.1
+2023-03-06
 
 * ait
-  * Bump version to 6.5.3
+  * Version 6.5.3
   * Added support for `alveo_u280` and `alveo_u280_hbm` boards
   * Fixed not being able to correctly run AIT from synthesis or implementation step
   * Fixed timing constraints
   * Changed default target language to verilog
   * Correctly check Vivado naming conventions
 * Picos OmpSs Manager (POM)
-  * Bump version to 6.1
+  * Version 6.1
   * Disable dependencies, reverse offload and task creation by default
 
 
