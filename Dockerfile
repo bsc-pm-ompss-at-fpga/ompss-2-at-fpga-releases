@@ -309,7 +309,7 @@ WORKDIR /tmp/work/
 ADD Makefile ./
 ADD ait ./ait
 ADD extrae ./extrae
-ADD mcxx ./mcxx
+ADD llvm ./llvm
 ADD nanos6-fpga ./nanos6-fpga
 ADD ompss-at-fpga-kernel-module ./ompss-at-fpga-kernel-module
 ADD xdma ./xdma
@@ -361,13 +361,13 @@ WORKDIR /tmp/work
 
 #X86_64
 RUN make -j`nproc` PREFIX_TARGET=$INSTALLATION_PREFIX/x86_64/ompss-2/${RELEASE_TAG} PREFIX_HOST=$INSTALLATION_PREFIX/$(arch | sed 's/aarch64/arm64/g' | sed 's/armhf/arm32/g')/ompss-2/${RELEASE_TAG} TARGET=$(test $(arch) != x86_64 && echo x86_64-linux-gnu) PLATFORM=qdma \
-    EXTRAE_HOME=$INSTALLATION_PREFIX/x86_64/ompss-2/${RELEASE_TAG}/extrae MCXX_NAME=mcxx-x86_64 \
+    EXTRAE_HOME=$INSTALLATION_PREFIX/x86_64/ompss-2/${RELEASE_TAG}/extrae \
     all
 RUN make mrproper
 
 #ARM64
 RUN make -j`nproc` PREFIX_TARGET=$INSTALLATION_PREFIX/arm64/ompss-2/${RELEASE_TAG} PREFIX_HOST=$INSTALLATION_PREFIX/$(arch | sed 's/aarch64/arm64/g' | sed 's/armhf/arm32/g')/ompss-2/${RELEASE_TAG} TARGET=$(test $(arch) != aarch64 && echo aarch64-linux-gnu) \
-    EXTRAE_HOME=$INSTALLATION_PREFIX/arm64/ompss-2/${RELEASE_TAG}/extrae MCXX_NAME=mcxx-arm64 \
+    EXTRAE_HOME=$INSTALLATION_PREFIX/arm64/ompss-2/${RELEASE_TAG}/extrae \
     NANOS6_CONFIG_FLAGS="--with-libnuma=$INSTALLATION_PREFIX/arm64/libnuma --with-symbol-resolution=indirect" \
     hwloc_CFLAGS="-I$INSTALLATION_PREFIX/arm64/hwloc/include" \
     hwloc_LIBS="-L$INSTALLATION_PREFIX/arm64/hwloc/lib -lhwloc" \
@@ -377,7 +377,7 @@ RUN make mrproper
 #ARM32
 #Assuming no one will compile from an arm32 platform => always setting TARGET
 #RUN make -j`nproc` PREFIX_TARGET=$INSTALLATION_PREFIX/arm32/ompss-2/${RELEASE_TAG} PREFIX_HOST=$INSTALLATION_PREFIX/$(arch | sed 's/aarch64/arm64/g' | sed 's/armhf/arm32/g')/ompss-2/${RELEASE_TAG} TARGET=arm-linux-gnueabihf \
-#    EXTRAE_HOME=$INSTALLATION_PREFIX/arm32/ompss-2/${RELEASE_TAG}/extrae MCXX_NAME=mcxx-arm32 \
+#    EXTRAE_HOME=$INSTALLATION_PREFIX/arm32/ompss-2/${RELEASE_TAG}/extrae \
 #    all
 #RUN make mrproper
 
@@ -402,9 +402,7 @@ RUN if [ "$BUILD_ONLY" = "true" ]; \
 RUN adduser --disabled-password --gecos '' ompss \
  && adduser ompss sudo \
  && echo 'ompss:ompss' | chpasswd \
- && echo "export PATH=\$PATH:$INSTALLATION_PREFIX/$(arch | sed 's/aarch64/arm64/g' | sed 's/armhf/arm32/g')/ompss-2/${RELEASE_TAG}/mcxx-arm64/bin" >>$INSTALLATION_PREFIX/$(arch | sed 's/aarch64/arm64/g' | sed 's/armhf/arm32/g')/ompss-2/${RELEASE_TAG}/environment_ompss_fpga.sh \
- && echo "export PATH=\$PATH:$INSTALLATION_PREFIX/$(arch | sed 's/aarch64/arm64/g' | sed 's/armhf/arm32/g')/ompss-2/${RELEASE_TAG}/mcxx-arm32/bin" >>$INSTALLATION_PREFIX/$(arch | sed 's/aarch64/arm64/g' | sed 's/armhf/arm32/g')/ompss-2/${RELEASE_TAG}/environment_ompss_fpga.sh \
- && echo "export PATH=\$PATH:$INSTALLATION_PREFIX/$(arch | sed 's/aarch64/arm64/g' | sed 's/armhf/arm32/g')/ompss-2/${RELEASE_TAG}/mcxx-x86_64/bin" >>$INSTALLATION_PREFIX/$(arch | sed 's/aarch64/arm64/g' | sed 's/armhf/arm32/g')/ompss-2/${RELEASE_TAG}/environment_ompss_fpga.sh \
+ && echo "export PATH=\$PATH:$INSTALLATION_PREFIX/$(arch | sed 's/aarch64/arm64/g' | sed 's/armhf/arm32/g')/ompss-2/${RELEASE_TAG}/llvm/bin" >>$INSTALLATION_PREFIX/$(arch | sed 's/aarch64/arm64/g' | sed 's/armhf/arm32/g')/ompss-2/${RELEASE_TAG}/environment_ompss_fpga.sh \
  && echo "export PATH=\$PATH:$INSTALLATION_PREFIX/$(arch | sed 's/aarch64/arm64/g' | sed 's/armhf/arm32/g')/ompss-2/${RELEASE_TAG}/ait/bin" >>$INSTALLATION_PREFIX/$(arch | sed 's/aarch64/arm64/g' | sed 's/armhf/arm32/g')/ompss-2/${RELEASE_TAG}/environment_ompss_fpga.sh \
  && echo "export PYTHONPATH=$INSTALLATION_PREFIX/$(arch | sed 's/aarch64/arm64/g' | sed 's/armhf/arm32/g')/ompss-2/${RELEASE_TAG}/ait" >>$INSTALLATION_PREFIX/$(arch | sed 's/aarch64/arm64/g' | sed 's/armhf/arm32/g')/ompss-2/${RELEASE_TAG}/environment_ompss_fpga.sh
 ADD ./dockerImageFiles/welcome_ompss_fpga.txt $INSTALLATION_PREFIX
@@ -414,9 +412,7 @@ ADD --chown=ompss:ompss ./dockerImageFiles/example ./example/
 #RUN ln -s $INSTALLATION_PREFIX/$(arch | sed 's/aarch64/arm64/g' | sed 's/armhf/arm32/g')/ompss/${RELEASE_TAG}/nanos6-fpga/share/doc/nanox/paraver_configs/ompss ./example/paraver_configs \
 RUN echo "export PATH=\$PATH:$INSTALLATION_PREFIX/$(arch | sed 's/aarch64/arm64/g' | sed 's/armhf/arm32/g')/wxparaver/bin" >>.bashrc \
  && echo "cat $INSTALLATION_PREFIX/welcome_ompss_fpga.txt" >>.bashrc \
- && echo "export PATH=\$PATH:$INSTALLATION_PREFIX/$(arch | sed 's/aarch64/arm64/g' | sed 's/armhf/arm32/g')/ompss-2/${RELEASE_TAG}/mcxx-arm64/bin" >>.bashrc \
- && echo "export PATH=\$PATH:$INSTALLATION_PREFIX/$(arch | sed 's/aarch64/arm64/g' | sed 's/armhf/arm32/g')/ompss-2/${RELEASE_TAG}/mcxx-arm32/bin" >>.bashrc \
- && echo "export PATH=\$PATH:$INSTALLATION_PREFIX/$(arch | sed 's/aarch64/arm64/g' | sed 's/armhf/arm32/g')/ompss-2/${RELEASE_TAG}/mcxx-x86_64/bin" >>.bashrc \
+ && echo "export PATH=\$PATH:$INSTALLATION_PREFIX/$(arch | sed 's/aarch64/arm64/g' | sed 's/armhf/arm32/g')/ompss-2/${RELEASE_TAG}/llvm/bin" >>.bashrc \
  && echo "export PATH=\$PATH:$INSTALLATION_PREFIX/$(arch | sed 's/aarch64/arm64/g' | sed 's/armhf/arm32/g')/ompss-2/${RELEASE_TAG}/ait/bin" >>.bashrc \
  && echo "export PYTHONPATH=$INSTALLATION_PREFIX/$(arch | sed 's/aarch64/arm64/g' | sed 's/armhf/arm32/g')/ompss-2/${RELEASE_TAG}/ait" >>.bashrc
 

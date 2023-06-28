@@ -23,7 +23,7 @@ pushd `dirname ${BASH_SOURCE[0]}`/../ >/dev/null
   git submodule foreach git config credential.helper cache
 
   #Stash the updated subrepos and commit the changes + create the tag
-  git add ait mcxx nanos6-fpga ompss-at-fpga-kernel-module xdma xtasks Changelog.md README.md
+  git add ait llvm nanos6-fpga ompss-at-fpga-kernel-module xdma xtasks Changelog.md README.md
   git commit -m "OmpSs-2-at-FPGA release ${VERSION}"
   git tag ${VERSION}
   git push origin master --tags

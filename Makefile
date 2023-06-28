@@ -20,17 +20,13 @@ ifndef XTASKS_PLATFORM
 	XTASKS_PLATFORM := $(PLATFORM)
 endif
 
-ifndef MCXX_NAME
-	MCXX_NAME := mcxx
-endif
-
 ifndef ENVSCRIPT_NAME
 	ENVSCRIPT_NAME := environment_ompss_2_fpga.sh
 endif
 
 export CROSS_COMPILE := $(TARGET)-
 
-all: xdma-install xtasks-install nanos6-install mcxx-install ait-install envscript-install
+all: xdma-install xtasks-install nanos6-install llvm-install ait-install envscript-install
 
 .PHONY: xdma xdma-install xtasks xtasks-install
 
@@ -48,11 +44,11 @@ xtasks-install: xtasks
 	pushd $(PREFIX_TARGET)/libxtasks/lib; \
 		ln -s libxtasks-hwruntime.so libxtasks.so; popd;
 
-.PHONY: nanos6-bootstrap nanos6-config mcxx-config-force nanos6-build nanos6-install
+.PHONY: nanos6-bootstrap nanos6-config llvm-config nanos6-build nanos6-install
 
 nanos6-bootstrap:
 	cd nanos6-fpga; 	\
-	autoreconf -fiv
+	./autogen.sh
 
 ifdef EXTRAE_HOME
 WITH_EXTRAE := --with-extrae=$(EXTRAE_HOME)
@@ -81,33 +77,29 @@ nanos6-build: nanos6-config
 nanos6-install: nanos6-build
 	$(MAKE) -C nanos6-build install
 
-.PHONY: mcxx-bootstrap mcxx-config mcxx-config-force mcxx-build mcxx-install
+.PHONY: llvm-config llvm-build llvm-install
 
-mcxx-bootstrap:
-	cd mcxx && autoreconf -fiv
+llvm-config: nanos6-install
+	mkdir -p llvm-build; \
+	cd llvm-build; \
+	cmake -G Ninja \
+	  -DCMAKE_INSTALL_PREFIX=$(PREFIX_HOST)/llvm \
+	  -DLLVM_TARGETS_TO_BUILD="X86;AArch64" \
+	  -DCMAKE_BUILD_TYPE=Release \
+	  -DCLANG_DEFAULT_NANOS6_HOME=$(PREFIX_TARGET)/nanos6 \
+	  -DLLVM_USE_SPLIT_DWARF=ON \
+	  -DLLVM_ENABLE_PROJECTS="clang" \
+	  -DLLVM_INSTALL_TOOLCHAIN_ONLY=ON \
+	  -DCMAKE_C_COMPILER=clang \
+	  -DCMAKE_CXX_COMPILER=clang++ \
+	  -DLLVM_USE_LINKER=lld \
+	../llvm/llvm
 
-mcxx-config: nanos6-install
-	if [ ! -r mcxx-build/config.status ]; \
-	then	\
-		$(MAKE) mcxx-config-force; \
-	fi
+llvm-build: llvm-config
+	ninja -C llvm-build
 
-mcxx-config-force: mcxx-bootstrap
-	mkdir -p mcxx-build; \
-	cd mcxx-build; \
-	../mcxx/configure \
-		--prefix=$(PREFIX_HOST)/$(MCXX_NAME) \
-		--with-nanos6=$(PREFIX_TARGET)/nanos6 \
-		--target=$(TARGET) \
-		--enable-ompss-2 \
-		--disable-vectorization \
-		$(MCXX_CONFIG_FLAGS)
-
-mcxx-build: mcxx-config
-	$(MAKE) -C mcxx-build -j$(BUILDCPUS)
-
-mcxx-install: mcxx-build
-	$(MAKE) -C mcxx-build install
+llvm-install: llvm-build
+	ninja install -C llvm-build
 
 .PHONY: ait-install
 
@@ -120,7 +112,7 @@ ait-install:
 
 environment_ompss_2_fpga.sh:
 	@echo "#!/bin/bash" >environment_ompss_2_fpga.sh
-	@echo 'export PATH=$$PATH:'$(PREFIX_HOST)'/'$(MCXX_NAME)'/bin' >>environment_ompss_2_fpga.sh
+	@echo 'export PATH=$$PATH:'$(PREFIX_HOST)'/llvm/bin' >>environment_ompss_2_fpga.sh
 	@echo 'export PATH=$$PATH:'$(PREFIX_HOST)'/ait/bin' >>environment_ompss_2_fpga.sh
 	@echo 'export PYTHONPATH='$(PREFIX_HOST)'/ait' >>environment_ompss_2_fpga.sh
 
@@ -130,14 +122,14 @@ envscript-install: environment_ompss_2_fpga.sh
 .PHONY: clean mrproper
 
 clean:
-	if [ -d mcxx-build ]; then $(MAKE) -C mcxx-build clean; fi
+	if [ -d llvm-build ]; then rm llvm-build/CMakeCache/CMakeCache.txtt; fi
 	if [ -d nanos6-build ]; then $(MAKE) -C nanos6-build clean; fi
 	$(MAKE) -C xdma/src/$(PLATFORM) clean
 	$(MAKE) -C xtasks/src/$(PLATFORM) clean
 	rm -f environment_ompss_2_fpga.sh 2>/dev/null
 
 mrproper: clean
-	rm -rf mcxx-build 2>/dev/null
+	rm -rf llvm-build 2>/dev/null
 	rm -rf nanos6-build 2>/dev/null
 
 .PHONY: help
@@ -148,25 +140,22 @@ help:
 	@echo "  PLATFORM             Fallback board platform that xtasks and xdma backends will target if no specific one has been defined (e.g. zynq, qdma) [def: zynq]"
 	@echo "  XDMA_PLATFORM        Board platform that xdma backend will target (e.g. zynq, qdma, euroexa_maxilink) [def: PLATFORM]"
 	@echo "  XTASKS_PLATFORM      Board platform that xtasks backend will target (e.g. zynq, qdma) [def: PLATFORM]"
-	@echo "  PREFIX_HOST          Installation prefix for the host tools (e.g. mcxx, ait) [def: /]"
+	@echo "  PREFIX_HOST          Installation prefix for the host tools (e.g. llvm, ait) [def: /]"
 	@echo "  PREFIX_TARGET        Installation prefix for the target tools (e.g. nanos6, libxdma) [def: /]"
 	@echo "  EXTRAE_HOME          Extrae installation path"
 	@echo "  BUILDCPUS            Number of processes used for building [def: nproc]"
-	@echo "  MCXX_NAME            Mercurium installation path within PREFIX_HOST [def: mcxx]"
 	@echo "  ENVSCRIPT_NAME       Environment script name within PREFIX_HOST [def: environment_ompss_2_fpga.sh]"
 	@echo "Targets:"
-	@echo "  xdma                 Build xdma library"
-	@echo "  xdma-install         Install xdma library"
-	@echo "  xtasks               Build xtasks library"
-	@echo "  xtasks-install       Install xtasks library"
-	@echo "  nanos6-bootstrap      Nanos++ configuration bootstrap"
-	@echo "  nanos6-config         Nanos++ configuration"
-	@echo "  nanos6-config-force   Force Nanos++ configuration"
-	@echo "  nanos6-build          Build Nanos++"
-	@echo "  nanos6-install        Install Nanos++"
-	@echo "  mcxx-bootstrap       Mercurium configuration bootstrap"
-	@echo "  mcxx-config          Mercurium configuration"
-	@echo "  mcxx-config-force    Force Mercurium configuration"
-	@echo "  mcxx-build           Build Mercurium"
-	@echo "  mcxx-install         Install Mercurium"
-	@echo "  envscript-install    Install environment script"
+	@echo "  xdma                  Build xdma library"
+	@echo "  xdma-install          Install xdma library"
+	@echo "  xtasks                Build xtasks library"
+	@echo "  xtasks-install        Install xtasks library"
+	@echo "  nanos6-bootstrap      Nanos6 configuration bootstrap"
+	@echo "  nanos6-config         Nanos6 configuration"
+	@echo "  nanos6-config-force   Force Nanos6 configuration"
+	@echo "  nanos6-build          Build Nanos6"
+	@echo "  nanos6-install        Install Nanos6"
+	@echo "  llvm-config           LLVM configuration"
+	@echo "  llvm-build            Build LLVM"
+	@echo "  llvm-install          Install LLVM"
+	@echo "  envscript-install     Install environment script"

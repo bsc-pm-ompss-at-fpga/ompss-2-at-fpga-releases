@@ -7,9 +7,9 @@
 [submodule "nanos6-fpga"]
 	path = nanos6-fpga
 	url = ../nanos6-fpga.git
-[submodule "mcxx"]
-	path = mcxx
-	url = ../mcxx.git
+[submodule "llvm"]
+	path = llvm
+	url = ../llvm.git
 [submodule "ait"]
 	path = ait
 	url = ../ait.git
