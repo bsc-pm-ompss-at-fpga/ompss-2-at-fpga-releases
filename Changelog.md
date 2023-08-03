@@ -1,3 +1,16 @@
+# Release 2.0.1
+2023-08-03
+
+* ait
+  * Version 6.8.2
+  * Fixed ZynqMP address mapping
+  * Fixed POM configuration setting
+* xdma
+  * Added support for unaligned memcpy on Zynq backend
+* nanos6
+  * Fixed race condition
+  * Fixes on FPGAReverseOffload polling service
+
 # Release 2.0.0
 2023-06-28
 
