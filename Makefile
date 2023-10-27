@@ -31,16 +31,16 @@ all: xdma-install xtasks-install nanos6-install llvm-install ait-install envscri
 .PHONY: xdma xdma-install xtasks xtasks-install
 
 xdma:
-	$(MAKE) -C xdma/src/$(XDMA_PLATFORM) KERNEL_MODULE_DIR=$(PWD)/ompss-at-fpga-kernel-module
+	$(MAKE) -j$(BUILDCPUS) -C xdma/src/$(XDMA_PLATFORM) KERNEL_MODULE_DIR=$(PWD)/ompss-at-fpga-kernel-module
 
 xdma-install: xdma
-	$(MAKE) -C xdma/src/$(XDMA_PLATFORM) install PREFIX=$(PREFIX_TARGET)/libxdma
+	$(MAKE) -j$(BUILDCPUS) -C xdma/src/$(XDMA_PLATFORM) install PREFIX=$(PREFIX_TARGET)/libxdma
 
 xtasks: xdma-install
-	$(MAKE) -C xtasks/src/$(XTASKS_PLATFORM) LIBXDMA_DIR=$(PREFIX_TARGET)/libxdma
+	$(MAKE) -j$(BUILDCPUS) -C xtasks/src/$(XTASKS_PLATFORM) LIBXDMA_DIR=$(PREFIX_TARGET)/libxdma
 
 xtasks-install: xtasks
-	$(MAKE) -C xtasks/src/$(XTASKS_PLATFORM) install PREFIX=$(PREFIX_TARGET)/libxtasks
+	$(MAKE) -j$(BUILDCPUS) -C xtasks/src/$(XTASKS_PLATFORM) install PREFIX=$(PREFIX_TARGET)/libxtasks
 	pushd $(PREFIX_TARGET)/libxtasks/lib; \
 		ln -s libxtasks-hwruntime.so libxtasks.so; popd;
 
@@ -50,10 +50,6 @@ nanos6-bootstrap:
 	cd nanos6-fpga; 	\
 	./autogen.sh
 
-ifdef EXTRAE_HOME
-WITH_EXTRAE := --with-extrae=$(EXTRAE_HOME)
-endif
-
 nanos6-config-force: nanos6-bootstrap
 	mkdir -p nanos6-build;	\
 	cd nanos6-build;	\
@@ -61,21 +57,20 @@ nanos6-config-force: nanos6-bootstrap
 		--host=$(TARGET) \
 		--enable-fpga --with-xtasks=$(PREFIX_TARGET)/libxtasks \
 		--with-symbol-resolution=indirect \
-		$(WITH_EXTRAE) \
 		--disable-all-instrumentations --disable-discrete-deps \
 		$(NANOS6_CONFIG_FLAGS)
 
-nanos6-config:
+nanos6-config: xtasks-install
 	if [ ! -r nanos6-build/config.status ]; \
 	then	\
 		$(MAKE) nanos6-config-force; \
 	fi
 
 nanos6-build: nanos6-config
-	$(MAKE) -C nanos6-build -j$(BUILDCPUS)
+	$(MAKE) -j$(BUILDCPUS) -C nanos6-build
 
 nanos6-install: nanos6-build
-	$(MAKE) -C nanos6-build install
+	$(MAKE) -j$(BUILDCPUS) -C nanos6-build install
 
 .PHONY: llvm-config llvm-build llvm-install
 
@@ -96,10 +91,10 @@ llvm-config: nanos6-install
 	../llvm/llvm
 
 llvm-build: llvm-config
-	ninja -C llvm-build
+	ninja -j$(BUILDCPUS) -C llvm-build
 
 llvm-install: llvm-build
-	ninja install -C llvm-build
+	ninja -j$(BUILDCPUS) install -C llvm-build
 
 .PHONY: ait-install
 
@@ -110,10 +105,10 @@ ait-install:
 
 .PHONY: environment_ompss_2_fpga.sh envscript-install
 
-environment_ompss_2_fpga.sh:
+environment_ompss_2_fpga.sh: ait-install llvm-install
 	@echo "#!/bin/bash" >environment_ompss_2_fpga.sh
-	@echo 'export PATH=$$PATH:'$(PREFIX_HOST)'/llvm/bin' >>environment_ompss_2_fpga.sh
-	@echo 'export PATH=$$PATH:'$(PREFIX_HOST)'/ait/bin' >>environment_ompss_2_fpga.sh
+	@echo 'export PATH='$(PREFIX_HOST)'/llvm/bin:$$PATH' >>environment_ompss_2_fpga.sh
+	@echo 'export PATH='$(PREFIX_HOST)'/ait/bin:$$PATH' >>environment_ompss_2_fpga.sh
 	@echo 'export PYTHONPATH='$(PREFIX_HOST)'/ait' >>environment_ompss_2_fpga.sh
 
 envscript-install: environment_ompss_2_fpga.sh
@@ -122,7 +117,7 @@ envscript-install: environment_ompss_2_fpga.sh
 .PHONY: clean mrproper
 
 clean:
-	if [ -d llvm-build ]; then rm llvm-build/CMakeCache/CMakeCache.txtt; fi
+	if [ -d llvm-build ]; then rm llvm-build/CMakeCache.txt; fi
 	if [ -d nanos6-build ]; then $(MAKE) -C nanos6-build clean; fi
 	$(MAKE) -C xdma/src/$(PLATFORM) clean
 	$(MAKE) -C xtasks/src/$(PLATFORM) clean
@@ -142,7 +137,6 @@ help:
 	@echo "  XTASKS_PLATFORM      Board platform that xtasks backend will target (e.g. zynq, qdma) [def: PLATFORM]"
 	@echo "  PREFIX_HOST          Installation prefix for the host tools (e.g. llvm, ait) [def: /]"
 	@echo "  PREFIX_TARGET        Installation prefix for the target tools (e.g. nanos6, libxdma) [def: /]"
-	@echo "  EXTRAE_HOME          Extrae installation path"
 	@echo "  BUILDCPUS            Number of processes used for building [def: nproc]"
 	@echo "  ENVSCRIPT_NAME       Environment script name within PREFIX_HOST [def: environment_ompss_2_fpga.sh]"
 	@echo "Targets:"
