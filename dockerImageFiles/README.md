@@ -2,7 +2,6 @@ Docker Image Readme
 ===================
 
 This docker image contains and pre-configured environment to build OmpSs-2@FPGA applications targeting FPGA devices for the following architectures:
- * ARM 32bits (arm-linux-gnueabihf)
  * ARM 64bits (aarch64-linux-gnu)
  * x86_64 (x86_64-linux-gnu)
 
