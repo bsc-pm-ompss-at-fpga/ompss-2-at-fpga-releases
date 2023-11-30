@@ -1,3 +1,33 @@
+# Release 2.1.0
+
+2023-11-30
+
+* clang
+  * Fix importer issues in C++ code
+  * Fix wrong array initializer being emitted in HLS code when using user-defined types
+  * Support for class serialization in HLS wrapper
+    * Fixes issues using `half` and wide port
+  * Support function calls with template parameters
+  * Support calling functions defined inside namespaces
+  * Support recursive `constexpr`
+* ait
+  * Version 6.13.0
+  * Implemented feature to easily add register slices and floorplanning constraints for SLR-based boards
+  * Added static register slices and constraints for `alveo_u200`, `alveo_u280`, `alveo_u280_hbm` and `alveo_u55c` boards
+  * Added feature `power_monitor` to instantiate power monitoring infrastructure
+  * Added feature `thermal_monitor` to instantiate thermal monitoring infrastructure
+  * Added `dump_board_info` argument  to dump board info JSON
+  * Fixed HBM AXI resets
+  * Excluded unused DDR address segments from address map
+  * Fixed `datainterfaces_map` and `interconnect_priorities` features
+  * Updated HDL language and C++ standard used in HLS step
+  * Fixed POM configuration
+* nanos6
+  * Added `nanos6_fpga_memcpy_wideport` stubs to the FPGA API
+* Picos OmpSs Manager (POM)
+  * Version 7.2
+  * Added support for multi-level nesting
+
 # Release 2.0.1
 2023-08-03
 
