@@ -19,7 +19,6 @@ RUN apt-get update && apt-get install -y \
         build-essential \
         ca-certificates \
         curl \
-        gfortran \
         gperf \
         git \
         libboost-all-dev \
@@ -78,7 +77,7 @@ RUN update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-12 8
 
 #if is arm64
 RUN if [ \"`arch`\" = \"aarch64\" ] || [ \"`arch`\" = \"arm64\" ] ; then \
-        dpkg --add-architecture amd64 && apt-get update && apt-get install -y\
+        dpkg --add-architecture amd64 && apt-get update && apt-get install -y \
         crossbuild-essential-amd64 \
         gfortran-x86-64-linux-gnu \
         g++-multilib-x86-64-linux-gnu \
@@ -113,11 +112,12 @@ ARG RELEASE_TAG
 #LIBNUMA
 WORKDIR /tmp/work/
 
-RUN wget https://github.com/numactl/numactl/releases/download/v2.0.16/numactl-2.0.16.tar.gz \
- && tar -zxf numactl-2.0.16.tar.gz \
- && rm numactl-2.0.16.tar.gz
+ARG numactl_ver=2.0.18
+RUN wget "https://github.com/numactl/numactl/releases/download/v${numactl_ver}/numactl-${numactl_ver}.tar.gz" \
+ && tar -zxf numactl-${numactl_ver}.tar.gz \
+ && rm numactl-${numactl_ver}.tar.gz
 
-WORKDIR /tmp/work/numactl-2.0.16
+WORKDIR /tmp/work/numactl-${numactl_ver}
 
 RUN autoreconf -ifv
 
@@ -140,11 +140,12 @@ RUN ./configure --prefix=$INSTALLATION_PREFIX/x86_64/libnuma --host=x86_64-linux
 #HWLOC
 WORKDIR /tmp/work/
 
-RUN wget https://download.open-mpi.org/release/hwloc/v2.9/hwloc-2.9.3.tar.gz \
- && tar -zxf hwloc-2.9.3.tar.gz \
- && rm hwloc-2.9.3.tar.gz
+ARG hwloc_ver=2.9.3
+RUN wget "https://download.open-mpi.org/release/hwloc/v2.9/hwloc-${hwloc_ver}.tar.gz" \
+ && tar -zxf hwloc-${hwloc_ver}.tar.gz \
+ && rm hwloc-${hwloc_ver}.tar.gz
 
-WORKDIR /tmp/work/hwloc-2.9.3
+WORKDIR /tmp/work/hwloc-${hwloc_ver}
 
 RUN autoreconf -ifv
 
