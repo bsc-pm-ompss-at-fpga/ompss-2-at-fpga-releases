@@ -1,3 +1,18 @@
+# Release 3.0.0-rc1
+
+2024-03-04
+
+* ait
+  * Version 7.2.0
+  * Removed support for Vivado < 2021.1
+  * Added support for `kv260` board
+  * Updated boot step for Petalinux 2021.1
+  * Reduced number of default Vivado jobs to launch
+* xtasks
+  * Added support for multi-FPGA environments
+* xdma
+  * Added support for multi-FPGA environments
+
 # Release 2.1.0
 
 2023-12-01
