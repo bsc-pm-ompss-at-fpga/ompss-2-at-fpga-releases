@@ -1,6 +1,6 @@
-# Release 3.0.0-rc1
+# Release 3.0.0-rc2
 
-2024-03-04
+2024-03-07
 
 * ait
   * Version 7.2.0
@@ -12,6 +12,8 @@
   * Added support for multi-FPGA environments
 * xdma
   * Added support for multi-FPGA environments
+* ompss-at-fpga-kernel-module
+  * Disable dma support for kernel >= 6
 
 # Release 2.1.0
 
