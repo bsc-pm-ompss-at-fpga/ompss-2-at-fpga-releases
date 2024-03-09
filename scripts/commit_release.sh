@@ -29,8 +29,10 @@ pushd `dirname ${BASH_SOURCE[0]}`/../ >/dev/null
   git push origin master --tags
 
   #Create a release tag in each subrepo and push them
-  git submodule foreach git tag -m "OmpSs-2-at-FPGA release ${VERSION}" ompss-2-at-fpga-release/${VERSION}
-  git submodule foreach git push origin ompss-2-at-fpga-release/${VERSION}
+  if ! [[ ${VERSION} =~ [0-9]+\.[0-9]+\.[0-9]+-rc[0-9]* ]] ; then
+    git submodule foreach git tag -m "OmpSs-2-at-FPGA release ${VERSION}" ompss-2-at-fpga-release/${VERSION}
+    git submodule foreach git push origin ompss-2-at-fpga-release/${VERSION}
+  fi
 
   #Clear the credentials cache
   git credential-cache exit
