@@ -1,9 +1,9 @@
-# Release 3.0.0-rc2
+# Release 3.0.0
 
-2024-03-07
+2024-03-09
 
 * ait
-  * Version 7.2.0
+  * Version 7.3.1
   * Removed support for Vivado < 2021.1
   * Added support for `kv260` board
   * Updated boot step for Petalinux 2021.1
