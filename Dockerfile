@@ -123,6 +123,9 @@ WORKDIR /tmp/work/numactl-${numactl_ver}
 
 RUN autoreconf -ifv
 
+# We need to patch syscall.c to add arm32 set_mempolicy_home_node syscall number (450)
+RUN sed -Ei '144s/(.*)/\1\ \|\|\ defined\(__arm__\)/' syscall.c
+
 #ARM64
 RUN ./configure --prefix=$INSTALLATION_PREFIX/arm64/libnuma --host=aarch64-linux-gnu \
  && make install \
