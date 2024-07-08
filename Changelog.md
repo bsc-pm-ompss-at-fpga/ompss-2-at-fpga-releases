@@ -1,3 +1,29 @@
+# Release 3.1.0-rc1
+
+2024-07-08
+
+* OmpSs-2@FPGA
+  * Added support for arm32 architecture
+  * Added support for intra-FPGA instrumentation based in ovni
+* ait
+  * Version 7.5.0
+  * Updated bitinfo to v12
+  * Added `--disable_creator_ports` option to disable memory ports in task-creator accelerators
+  * Added support for multi-slr crossing register slices
+  * Added support for tuning register slices stages
+  * Several bug fixes
+* xtasks
+  * Version 17.0
+  * Added tool to monitor power and temperature stats
+  * Added API to access CMS and SYSMON registers
+  * Added option to `read_bitinfo` to retrieve bitstream user-id
+  * Fixed memory leaks
+* xdma
+  * Optimization of instrumentation backend
+* llvm
+  * Keep original FPGA function name when generating HLS wrapper
+  * Always emit FPGA HLS copies in the same order to avoid non-deterministic outputs
+
 # Release 3.0.0
 
 2024-03-09
