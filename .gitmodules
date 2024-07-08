@@ -16,3 +16,7 @@
 [submodule "ompss-at-fpga-kernel-module"]
 	path = ompss-at-fpga-kernel-module
 	url = ../ompss-at-fpga-kernel-module.git
+[submodule "ovni"]
+	path = ovni
+	url = ../ovni.git
+	branch = master
