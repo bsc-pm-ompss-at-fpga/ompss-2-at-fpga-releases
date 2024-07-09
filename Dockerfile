@@ -29,6 +29,8 @@ RUN apt-get update && apt-get install -y -q \
 # AIT
         python3 \
         python3-pip \
+# Nanos6
+        libboost-all-dev \
 # Needed by Xilinx tools
         libgtk2.0-0 \
         libncurses5 \
