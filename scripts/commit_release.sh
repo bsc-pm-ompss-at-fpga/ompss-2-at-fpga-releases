@@ -26,7 +26,7 @@ pushd `dirname ${BASH_SOURCE[0]}`/../ >/dev/null
   git add ait llvm nanos6-fpga ompss-at-fpga-kernel-module xdma xtasks Changelog.md README.md
   git commit -m "OmpSs-2-at-FPGA release ${VERSION}"
   git tag ${VERSION}
-  git push origin master --tags
+  git push origin master ${VERSION}
 
   #Create a release tag in each subrepo and push them
   if ! [[ ${VERSION} =~ [0-9]+\.[0-9]+\.[0-9]+-rc[0-9]* ]] ; then

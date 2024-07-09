@@ -227,7 +227,7 @@ ARG INSTALLATION_PREFIX
 COPY --from=build $INSTALLATION_PREFIX $INSTALLATION_PREFIX
 LABEL AUTHOR="Programming Models Group at BSC <ompss-fpga-support@bsc.es> (https://pm.bsc.es/ompss-at-fpga)"
 
-RUN adduser --disabled-password --gecos '' --uid 1312 --group ompss \
+RUN adduser --disabled-password --gecos '' --uid 1312 --shell /bin/bash ompss \
  && adduser ompss sudo \
  && echo 'ompss:ompss' | chpasswd
 
