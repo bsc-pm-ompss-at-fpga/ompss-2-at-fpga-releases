@@ -7,12 +7,6 @@ ARG INSTALLATION_PREFIX
 ARG RELEASE_TAG
 LABEL AUTHOR="Programming Models Group at BSC <ompss-fpga-support@bsc.es> (https://pm.bsc.es/ompss-at-fpga)"
 RUN apt-get update && apt-get install -y -q \
-# llvm
-        cmake \
-        clang-12 \
-        clang++-12 \
-        lld-12 \
-        ninja-build \
 # Common
         autoconf \
         automake \
@@ -26,6 +20,12 @@ RUN apt-get update && apt-get install -y -q \
         sudo \
         vim \
         wget \
+# llvm
+        cmake \
+        clang-12 \
+        clang++-12 \
+        lld-12 \
+        ninja-build \
 # AIT
         python3 \
         python3-pip \

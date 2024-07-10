@@ -79,7 +79,7 @@ llvm-config: nanos6-install
 	cd llvm-build; \
 	cmake -G Ninja \
 	  -DCMAKE_INSTALL_PREFIX=$(PREFIX_HOST)/llvm \
-	  -DLLVM_TARGETS_TO_BUILD="X86;AArch64" \
+	  -DLLVM_TARGETS_TO_BUILD="X86;AArch64;ARM" \
 	  -DCMAKE_BUILD_TYPE=Release \
 	  -DCLANG_DEFAULT_NANOS6_HOME=$(PREFIX_TARGET)/nanos6 \
 	  -DLLVM_USE_SPLIT_DWARF=ON \
