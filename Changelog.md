@@ -1,12 +1,12 @@
-# Release 3.1.0-rc7
+# Release 3.1.0-rc8
 
-2024-07-10
+2024-07-12
 
 * OmpSs-2@FPGA
   * Added support for arm32 architecture
   * Added support for intra-FPGA instrumentation based in ovni
 * ait
-  * Version 7.5.0
+  * Version 7.5.1
   * Updated bitinfo to v12
   * Added `--disable_creator_ports` option to disable memory ports in task-creator accelerators
   * Added support for multi-slr crossing register slices
