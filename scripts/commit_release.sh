@@ -20,16 +20,17 @@ pushd $(dirname ${BASH_SOURCE[0]})/../ >/dev/null
 
   # Enable the cache mode for credentials in meta-repository and every submodule
   git config credential.helper cache
-  git submodule foreach git config credential.helper cache
 
   # If commiting a public release, create a release tag in each subrepo and push them
   # Also delete all release candidate tags from meta-repository
   if ! [[ ${VERSION} =~ [0-9]+\.[0-9]+\.[0-9]+-rc[0-9]* ]] ; then
+    git submodule foreach git config credential.helper cache
     git submodule foreach git tag -m "OmpSs-2-at-FPGA release ${VERSION}" ompss-2-at-fpga-release/${VERSION}
     git submodule foreach git push origin ompss-2-at-fpga-release/${VERSION}
+    git submodule foreach git credential-cache exit
 
-    git tag --list '[0-9]\.[0-9]\.[0-9]-rc[0-9]*' | xargs -n1 git tag --delete
-    git push origin master --tags
+    git push origin --delete $(git tag --list '[0-9]\.[0-9]\.[0-9]-rc[0-9]*')
+    git tag --delete $(git tag --list '[0-9]\.[0-9]\.[0-9]-rc[0-9]*')
   fi
 
   # Stash the updated subrepos and commit the changes + create the tag
@@ -40,6 +41,5 @@ pushd $(dirname ${BASH_SOURCE[0]})/../ >/dev/null
 
   # Clear the credentials cache
   git credential-cache exit
-  git submodule foreach git credential-cache exit
 
 popd >/dev/null
