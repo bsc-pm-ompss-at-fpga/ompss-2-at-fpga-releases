@@ -24,10 +24,10 @@ pushd $(dirname ${BASH_SOURCE[0]})/../ >/dev/null
   # If commiting a public release, create a release tag in each subrepo and push them
   # Also delete all release candidate tags from meta-repository
   if ! [[ ${VERSION} =~ [0-9]+\.[0-9]+\.[0-9]+-rc[0-9]* ]] ; then
-    git submodule foreach git config credential.helper cache
-    git submodule foreach git tag -m "OmpSs-2-at-FPGA release ${VERSION}" ompss-2-at-fpga-release/${VERSION}
-    git submodule foreach git push origin ompss-2-at-fpga-release/${VERSION}
-    git submodule foreach git credential-cache exit
+    #git submodule foreach git config credential.helper cache
+    #git submodule foreach git tag -m "OmpSs-2-at-FPGA release ${VERSION}" ompss-2-at-fpga-release/${VERSION}
+    #git submodule foreach git push origin ompss-2-at-fpga-release/${VERSION}
+    #git submodule foreach git credential-cache exit
 
     git push origin --delete $(git tag --list '[0-9]\.[0-9]\.[0-9]-rc[0-9]*')
     git tag --delete $(git tag --list '[0-9]\.[0-9]\.[0-9]-rc[0-9]*')
