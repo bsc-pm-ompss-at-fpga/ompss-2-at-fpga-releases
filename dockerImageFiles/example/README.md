@@ -1,4 +1,4 @@
-OmpSs@FPGA Example Readme
+OmpSs-2@FPGA Example Readme
 =========================
 
 This directory contains a basic implementation of the dotproduct kernel using FPGA tasks.
@@ -12,53 +12,49 @@ The example comes with a Makefile that allows easily building the bitstream (and
 
 The environment variables that we may need to set up for the compilation process are:
  * `CROSS_COMPILE` [Def: ""] Cross compiler prefix. The docker image has the tool-chain supporting:
-   * `arm-linux-gnueabihf-` (ARM 32bits).
    * `aarch64-linux-gnu-` (ARM 64bits).
- * `MCC` [Def: `fpgacc`] Mercurium profile to compile the application.
- * `CFLAGS` [Def: `-O3`] Compiler flags.
+   * `arm-linux-gnueabihf-` (ARM 32bits).
+ * `CFLAGS` [Def: ""] Compiler flags.
  * `LDFLAGS` [Def: ""] Linker flags.
- * `PETALINUX_INSTALL` [Def: ""] Petalinux installation directory (only needed when building boot files)
  * `PETALINUX_BUILD` [Def: ""] Petalinux project directory (only needed when building boot files)
 
 **NOTE: Do not source petalinux and/or vivado settings as they may break toolchain configuration.**
 
-For example, we will set the following environment variables to build the example application for the Zedboard:
+For example, we will set the following environment variables to build the example application for the ZCU102:
 
 ```bash
-export CROSS_COMPILE=arm-linux-gnueabihf-
+export CROSS_COMPILE=aarch64-linux-gnu-
 ```
 
 ##### Bitstream
 
-To generate the bitstream, we must enable the bitstream generation in the Mercurium compiler (using the `--bitstream-generation` flag) and provide it the FPGA linker (aka `ait`) flags with `-Wf` option.
-In addition, we can use the `--instrument` option of Merciurim to enable the HW instrumentation generation.
-The instrumentation can be generated and not used when running the application, but if we generate the bitstream without instrumentation support we will not be able to instrument the executions in the FPGA accelerators.
+To generate the bitstream, we must enable the bitstream generation in the LLVM/Clang compiler (using the `--fompss-fpga-wrapper-code` flag) and provide it the FPGA linker (aka `ait`) flags with `--fompss-fpga-ait-flags` option.
+In addition, we can use the `--fompss-fpga-instrumentation` option of LLVM/Clang to enable the HW instrumentation generation.
+The instrumentation can be generated and not used when running the application, but if we generate the bitstream without instrumentation support we will not be able to instrument the execution in the FPGA accelerators.
 
-The Makefile has a target to build the bitstream for any board.
-It enables the bitstream generation, instrumentation and SOM hardware runtime.
+The Makefile has a set of generic targets to build the bitstream for any board.
+One just enables bitstream generation, another enables instrumentation and the third one enables hardware debug.
 Then, we can just execute the following command to generate a first bitstream:
 
 ```bash
-make bitstream BOARD=zedboard
+make bitstream-p BOARD=zcu102
 ```
 
-Note that `ait` expects to have `vivado_hls` and `vivado` tools in the path.
+Note that `ait` expects to have `vitis_hls` and `vivado` tools in the path.
 Therefore, we need to add them to the `PATH` environment variable.
-Assuming that Xilinx software version 2017.3 is available in `/opt/xilinx` folder, we can add them with the following command:
+Assuming that Xilinx software version 2021.1 is available in `/opt/xilinx` folder, we can add them with the following command:
 
 ```bash
-export PATH=$PATH:/opt/xilinx/Vivado/2017.3/bin
+export PATH=$PATH:/opt/xilinx/Vivado/2021.1/bin
 ```
 
 **NOTE: Do not source vivado settings as it may break the toolchain configuration.**
 
 ##### Boot Files
 
-Some boards (like zcu102) do not support loading the bitstream into the FPGA after the boot, therefore we need to generate the boot files and update them before booting the board.
 The Makefile has a target to build the boot once the bitstream has been created.
-This step is not needed for the z7000 family of devices, as the bitstream can be loaded after boot.
 
-To generate the boot, we need to have the `PETALINUX_INSTALL` and `PETALINUX_BUILD` environment variables appropriately set.
+To generate the boot files, we need to have the `PETALINUX_BUILD` environment variable appropriately set.
 Then, we can run:
 
 ```bash
@@ -71,7 +67,7 @@ The build target of the Makefile builds 3 versions of the application (and not t
 To generate them we have to execute:
 
 ```bash
-make build
+make dotprodut-p dotproduct-d dotproduct-i
 ```
 
 ### Run
@@ -83,28 +79,24 @@ The files should include at least:
 
 ##### Load the bitstream
 
-Loading the new generated bitstream in the FPGA may be different depending on the board where we will run.
-In the z7000 family of boards, we can do it with the following command available in the provided SD images:
+In order to load the bitstream we can use the `fpgautil` utility from Xilinx.
 
 ```bash
-load_bitstream dotproduct.bin
+fpgautil -b dotproduct.bin
 ```
-
-The ultrascale boards may require loading the bitstream during boot, so we need to update the boot files instead of executing the above commands.
-We need to copy the `BOOT.BIN` and `ìmage.ub` files in the BOOT partition of the SD image.
 
 ##### Debug run
 
 The debug version of the application runs using the Nanos6 debug version, which has sanity checks to avoid hangs or runtime crashes.
-It is used like other binaries but some runtime options will provide more information (like `--summary`).
+It is used like other binaries but some runtime options will provide more information (like `version.instrument=verbose`).
 
 ```bash
-NX_ARGS="--summary" ./dotproduct-d
+NANOS6_CONFIG_OVERRIDE="version.instrument=verbose" ./dotproduct-d
 ```
 
 ##### Performance run
 
-The performance version of the application runs using the Nanos6 performance version, which avoids the debug checks.
+The performance version of the application runs without instrumentation nor debug enabled.
 
 ```bash
 ./dotproduct-p
@@ -112,9 +104,8 @@ The performance version of the application runs using the Nanos6 performance ver
 
 ##### Instrumentation run
 
-The instrumentation version of the application runs using the Nanos6 instrumentation version, which supports instrumenting the applications execution.
-The extrae instrumentation plugin has been extended to support device instrumentation, so the runtime will gather information from the FPGA accelerators and add them to the usual extrae trace.
+The ovni instrumentation tool has been extended to support device instrumentation, so the runtime will gather information from the FPGA accelerators and add them to the ovni trace.
 
 ```bash
-NX_ARGS="--instrumentation=extrae" ./dotproduct-i
+NANOS6_CONFIG_OVERRIDE="version.instrument=ovni" ./dotproduct-i
 ```

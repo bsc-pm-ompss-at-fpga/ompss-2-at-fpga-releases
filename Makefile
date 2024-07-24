@@ -20,10 +20,6 @@ ifndef XTASKS_PLATFORM
 	XTASKS_PLATFORM := $(PLATFORM)
 endif
 
-ifndef ENVSCRIPT_NAME
-	ENVSCRIPT_NAME := environment_ompss_2_fpga.sh
-endif
-
 export CROSS_COMPILE := $(TARGET)-
 
 all: xdma-install xtasks-install nanos6-install llvm-install ait-install envscript-install
@@ -103,16 +99,15 @@ ait-install:
 	rm -rf $(PREFIX_HOST)/ait; \
 	python3 -m pip install ./ait -t $(PREFIX_HOST)/ait
 
-.PHONY: environment_ompss_2_fpga.sh envscript-install
+.PHONY: envscript-install
 
-environment_ompss_2_fpga.sh: ait-install llvm-install
-	@echo "#!/bin/bash" >environment_ompss_2_fpga.sh
-	@echo 'export PATH='$(PREFIX_HOST)'/llvm/bin:$$PATH' >>environment_ompss_2_fpga.sh
-	@echo 'export PATH='$(PREFIX_HOST)'/ait/bin:$$PATH' >>environment_ompss_2_fpga.sh
-	@echo 'export PYTHONPATH='$(PREFIX_HOST)'/ait' >>environment_ompss_2_fpga.sh
-
-envscript-install: environment_ompss_2_fpga.sh
-	cp -v $^ $(PREFIX_HOST)/$(ENVSCRIPT_NAME)
+envscript-install: ait-install llvm-install xtasks-install
+	@echo "#!/bin/bash" >$(PREFIX_HOST)/environment_ompss_2_fpga.sh
+	@echo 'export PATH='$(PREFIX_HOST)'/llvm/bin:$$PATH' >>$(PREFIX_HOST)/environment_ompss_2_fpga.sh
+	@echo 'export PATH='$(PREFIX_HOST)'/ait/bin:$$PATH' >>$(PREFIX_HOST)/environment_ompss_2_fpga.sh
+	@echo 'export PYTHONPATH='$(PREFIX_HOST)'/ait' >>$(PREFIX_HOST)/environment_ompss_2_fpga.sh
+	@echo "#!/bin/bash" >$(PREFIX_TARGET)/environment_ompss_2_fpga.sh
+	@echo 'export PATH='$(PREFIX_TARGET)'/libxtasks/bin:$$PATH' >>$(PREFIX_TARGET)/environment_ompss_2_fpga.sh
 
 .PHONY: clean mrproper
 
@@ -138,7 +133,6 @@ help:
 	@echo "  PREFIX_HOST          Installation prefix for the host tools (e.g. llvm, ait) [def: /]"
 	@echo "  PREFIX_TARGET        Installation prefix for the target tools (e.g. nanos6, libxdma) [def: /]"
 	@echo "  BUILDCPUS            Number of processes used for building [def: nproc]"
-	@echo "  ENVSCRIPT_NAME       Environment script name within PREFIX_HOST [def: environment_ompss_2_fpga.sh]"
 	@echo "Targets:"
 	@echo "  xdma                  Build xdma library"
 	@echo "  xdma-install          Install xdma library"

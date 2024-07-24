@@ -7,25 +7,25 @@ A linux system with
  * dd (part of coreutils)
  * gzip
  * An SD card (Class 10 is recommended)
-   * 8GB card for zynq ultrascale
-   * 4GB for zynq 7000 devices
+   * 8GB card for ZynMP devices
+   * 4GB for Zynq devices
  * udisks2 (for reading image contents)
 
 ## General information
 
-The default user is `ubuntu`, and its password is `ubuntu`.
+The default user is `ompss`, and its password is `ompss`.
 
 ## Dumping the image file into an SD card
 
 The compressed image file can be written to the SD card in a single step
 
 ```bash
-gunzip <ultrascale_sd_unknwn.img.gz | dd of=/dev/mmcblk0 bs=4M status=progress
+gunzip <zynqmp_sd_unknwn.img.gz | dd of=/dev/mmcblk0 bs=32M status=progress
 ```
 
 Also, an uncompressed image can be written to the SD
 ```bash
-dd if=ultrascale_sd_unknwn.img of=/dev/mmcblk0 bs=4M status=progress
+dd if=zynqmp_sd_unknwn.img of=/dev/mmcblk0 bs=32M status=progress
 ```
 
 ### Setting up boot files
@@ -48,14 +48,14 @@ Instead of writing its contents to a physical card, filesystem contents can be m
 
 Image file must be uncompressed
 ```bash
-gunzip ultrascale_sd_unknwn.img.gz
+gunzip zynqmp_sd_unknwn.img.gz
 ```
 
 Then, image can be mounted using udisksctl tool
 
 Setup the loop device:
 ```bash
-udisksctl loop-setup -f ultrascale_sd_unknwn.img
+udisksctl loop-setup -f zynqmp_sd_unknwn.img
 ```
 
 This will create a loop device in the form of `/dev/loop0pX` where `X` is the partition index.

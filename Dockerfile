@@ -73,21 +73,6 @@ RUN update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-12 8
  && echo 'tzdata tzdata/Zones/Etc select UTC' | debconf-set-selections \
  && apt-get install -q --no-install-recommends tzdata
 
-#if is arm64
-#RUN if [ \"`arch`\" = \"aarch64\" ] || [ \"`arch`\" = \"arm64\" ] ; then \
-#        dpkg --add-architecture amd64 && apt-get update && apt-get install -y \
-#        crossbuild-essential-amd64 \
-#        gfortran-x86-64-linux-gnu \
-#        g++-multilib-x86-64-linux-gnu \
-#        gcc-multilib-x86-64-linux-gnu ; \
-#    elif [ \"`arch`\" = \"x86_64\" ]; then \
-#        apt-get install -y \
-#        crossbuild-essential-arm64 \
-#        gfortran-aarch64-linux-gnu; \
-#    else \
-#        false; \
-#    fi;
-
 #ARM64
 RUN apt-get update \
  && apt-get install -y -q \
@@ -190,7 +175,7 @@ WORKDIR /tmp/work
 #X86_64
 RUN make \
     PREFIX_TARGET=$INSTALLATION_PREFIX/x86_64/ompss-2/${RELEASE_TAG} \
-    PREFIX_HOST=$INSTALLATION_PREFIX/$(arch | sed 's/aarch64/arm64/g' | sed 's/armhf/arm32/g')/ompss-2/${RELEASE_TAG} \
+    PREFIX_HOST=$INSTALLATION_PREFIX/x86_64/ompss-2/${RELEASE_TAG} \
     PLATFORM=qdma \
     all \
  && make mrproper
@@ -199,7 +184,7 @@ RUN make \
 RUN make \
     TARGET=aarch64-linux-gnu \
     PREFIX_TARGET=$INSTALLATION_PREFIX/arm64/ompss-2/${RELEASE_TAG} \
-    PREFIX_HOST=$INSTALLATION_PREFIX/$(arch | sed 's/aarch64/arm64/g' | sed 's/armhf/arm32/g')/ompss-2/${RELEASE_TAG} \
+    PREFIX_HOST=$INSTALLATION_PREFIX/x86_64/ompss-2/${RELEASE_TAG} \
     NANOS6_CONFIG_FLAGS="--with-libnuma=$INSTALLATION_PREFIX/arm64/libnuma --with-symbol-resolution=indirect" \
     hwloc_CFLAGS="-I$INSTALLATION_PREFIX/arm64/hwloc/include" \
     hwloc_LIBS="-L$INSTALLATION_PREFIX/arm64/hwloc/lib -lhwloc" \
@@ -211,7 +196,7 @@ RUN make \
 RUN make \
     TARGET=arm-linux-gnueabihf \
     PREFIX_TARGET=$INSTALLATION_PREFIX/arm32/ompss-2/${RELEASE_TAG} \
-    PREFIX_HOST=$INSTALLATION_PREFIX/$(arch | sed 's/aarch64/arm64/g' | sed 's/armhf/arm32/g')/ompss-2/${RELEASE_TAG} \
+    PREFIX_HOST=$INSTALLATION_PREFIX/x86_64/ompss-2/${RELEASE_TAG} \
     NANOS6_CONFIG_FLAGS="--with-libnuma=$INSTALLATION_PREFIX/arm32/libnuma --with-symbol-resolution=indirect" \
     hwloc_CFLAGS="-I$INSTALLATION_PREFIX/arm32/hwloc/include" \
     hwloc_LIBS="-L$INSTALLATION_PREFIX/arm32/hwloc/lib -lhwloc" \
@@ -237,8 +222,8 @@ USER ompss
 ADD --chmod=0775 --chown=ompss:ompss ./dockerImageFiles/example ./example/
 
 RUN echo "cat $INSTALLATION_PREFIX/welcome_ompss_fpga.txt" >>.bashrc \
- && echo "export PATH=$INSTALLATION_PREFIX/$(arch | sed 's/aarch64/arm64/g' | sed 's/armhf/arm32/g')/ompss-2/${RELEASE_TAG}/llvm/bin:\$PATH" >>.bashrc \
- && echo "export PATH=$INSTALLATION_PREFIX/$(arch | sed 's/aarch64/arm64/g' | sed 's/armhf/arm32/g')/ompss-2/${RELEASE_TAG}/ait/bin:\$PATH" >>.bashrc \
- && echo "export PYTHONPATH=$INSTALLATION_PREFIX/$(arch | sed 's/aarch64/arm64/g' | sed 's/armhf/arm32/g')/ompss-2/${RELEASE_TAG}/ait" >>.bashrc
+ && echo "export PATH=$INSTALLATION_PREFIX/x86_64/ompss-2/${RELEASE_TAG}/llvm/bin:\$PATH" >>.bashrc \
+ && echo "export PATH=$INSTALLATION_PREFIX/x86_64/ompss-2/${RELEASE_TAG}/ait/bin:\$PATH" >>.bashrc \
+ && echo "export PYTHONPATH=$INSTALLATION_PREFIX/x86_64/ompss-2/${RELEASE_TAG}/ait" >>.bashrc
 
 CMD ["bash"]

@@ -2,23 +2,24 @@ Docker Image Readme
 ===================
 
 This docker image contains and pre-configured environment to build OmpSs-2@FPGA applications targeting FPGA devices for the following architectures:
- * ARM 64bits (aarch64-linux-gnu)
  * x86_64 (x86_64-linux-gnu)
+ * ARM 64bits (aarch64-linux-gnu)
+ * ARM 32bits (arm-linux-gnueabihf)
 
 ### Prerequisites
  * Docker
- * Xilinx Vivado (recommended 2018.3 or higher)
+ * Xilinx Vivado (recommended 2021.1 or higher)
  * Vivado license for the target device
  * [Optional for BOOT.BIN generation] Petalinux
 
 
 ### General information
 
-The image contains different Mercurium installations to cross-compile applications for each architecture.
-In addition, it contains the required libraries, which the applications will be linked against, in the `/opt/install-XXXX` folder.
+The image contains a custom LLVM/Clang compiler installation to cross-compile application for each architecture.
+In addition, it contains the required libraries, which the applications will be linked against, in the `/opt/bsc/ARCH/` folder.
 These libraries are also installed in the same paths in the SD-Images.
 
-The image **does not contain** an installation of Xilinx tools (like VivadoHLS or Vivado), neither an installation petalinux tools or a build of a petalinux project.
+The image **does not contain** an installation of Xilinx tools (like Vitis HLS or Vivado), neither an installation of petalinux tools or a build of a petalinux project.
 These tools will be needed to generate the board bitstreams and/or generate the boot files.
 The next sections show how to use the host installation of these tools inside the container.
 
