@@ -1,6 +1,6 @@
-# Release 3.1.0-rc8
+# Release 3.1.0
 
-2024-07-12
+2024-07-24
 
 * OmpSs-2@FPGA
   * Added support for arm32 architecture
