@@ -1,3 +1,14 @@
+# Release 3.1.1
+
+2024-07-30
+
+* ait
+  * Version 7.5.4
+  * Fixed dangling instrumentation ports
+  * Minor fixes on constraints files
+* ovni
+  * Updated to upstream version 1.10.0
+
 # Release 3.1.0
 
 2024-07-24
