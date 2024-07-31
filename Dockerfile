@@ -172,14 +172,6 @@ ENV LDFLAGS=
 #INSTALL TOOLCHAIN
 WORKDIR /tmp/work
 
-#X86_64
-RUN make \
-    PREFIX_TARGET=$INSTALLATION_PREFIX/x86_64/ompss-2/${RELEASE_TAG} \
-    PREFIX_HOST=$INSTALLATION_PREFIX/x86_64/ompss-2/${RELEASE_TAG} \
-    PLATFORM=qdma \
-    all \
- && make mrproper
-
 #ARM64
 RUN make \
     TARGET=aarch64-linux-gnu \
@@ -201,6 +193,15 @@ RUN make \
     hwloc_CFLAGS="-I$INSTALLATION_PREFIX/arm32/hwloc/include" \
     hwloc_LIBS="-L$INSTALLATION_PREFIX/arm32/hwloc/lib -lhwloc" \
     PLATFORM=zynq \
+    all \
+ && make mrproper
+
+#X86_64
+# We install x86_64 the last so the default target for clang is set to x86
+RUN make \
+    PREFIX_TARGET=$INSTALLATION_PREFIX/x86_64/ompss-2/${RELEASE_TAG} \
+    PREFIX_HOST=$INSTALLATION_PREFIX/x86_64/ompss-2/${RELEASE_TAG} \
+    PLATFORM=qdma \
     all \
  && make mrproper
 

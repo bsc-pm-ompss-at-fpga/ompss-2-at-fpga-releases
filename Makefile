@@ -102,12 +102,12 @@ ait-install:
 .PHONY: envscript-install
 
 envscript-install: ait-install llvm-install xtasks-install
+	@echo "#!/bin/bash" >$(PREFIX_TARGET)/environment_ompss_2_fpga.sh
 	@echo "#!/bin/bash" >$(PREFIX_HOST)/environment_ompss_2_fpga.sh
+	@echo 'export PATH='$(PREFIX_TARGET)'/libxtasks/bin:$$PATH' >>$(PREFIX_TARGET)/environment_ompss_2_fpga.sh
 	@echo 'export PATH='$(PREFIX_HOST)'/llvm/bin:$$PATH' >>$(PREFIX_HOST)/environment_ompss_2_fpga.sh
 	@echo 'export PATH='$(PREFIX_HOST)'/ait/bin:$$PATH' >>$(PREFIX_HOST)/environment_ompss_2_fpga.sh
 	@echo 'export PYTHONPATH='$(PREFIX_HOST)'/ait' >>$(PREFIX_HOST)/environment_ompss_2_fpga.sh
-	@echo "#!/bin/bash" >$(PREFIX_TARGET)/environment_ompss_2_fpga.sh
-	@echo 'export PATH='$(PREFIX_TARGET)'/libxtasks/bin:$$PATH' >>$(PREFIX_TARGET)/environment_ompss_2_fpga.sh
 
 .PHONY: clean mrproper
 
