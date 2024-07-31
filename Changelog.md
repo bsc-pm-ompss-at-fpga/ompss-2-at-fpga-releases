@@ -1,9 +1,9 @@
 # Release 3.1.1
 
-2024-07-30
+2024-07-31
 
 * ait
-  * Version 7.5.4
+  * Version 7.5.5
   * Fixed dangling instrumentation ports
   * Minor fixes on constraints files
 * ovni
