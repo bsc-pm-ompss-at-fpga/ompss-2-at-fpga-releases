@@ -9,6 +9,15 @@ VERSION=$1
 #NOTE: Ensure running in the repo root dir
 pushd $(dirname ${BASH_SOURCE[0]})/../ >/dev/null
 
+  CHANGELOG_VER=$(head -n1 Changelog.md | grep -oE "[0-9.]*(-rc[0-9]*)?")
+  if [ "$CHANGELOG_VER" != "$VERSION" ] ; then
+    echo -e "ERROR:\tThe changelog version does not match the release version"
+    column -t -s ':' <<< "
+    Changelog version: ${CHANGELOG_VER}
+    Release version: ${VERSION}"
+    exit
+  fi
+
   CHANGELOG_DIFF=$(git diff Changelog.md)
   if [ "x$CHANGELOG_DIFF" == "x" ]; then
     echo -e "ERROR:\tThe changelog does not contain the release changes"
