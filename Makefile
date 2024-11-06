@@ -36,7 +36,7 @@ xtasks: xdma-install
 	$(MAKE) -j$(BUILDCPUS) -C xtasks/src/$(XTASKS_PLATFORM) LIBXDMA_DIR=$(PREFIX_TARGET)/libxdma
 
 xtasks-install: xtasks
-	$(MAKE) -j$(BUILDCPUS) -C xtasks/src/$(XTASKS_PLATFORM) install PREFIX=$(PREFIX_TARGET)/libxtasks
+	$(MAKE) -j$(BUILDCPUS) -C xtasks/src/$(XTASKS_PLATFORM) install PREFIX=$(PREFIX_TARGET)/libxtasks LIBXDMA_DIR=$(PREFIX_TARGET)/libxdma
 	pushd $(PREFIX_TARGET)/libxtasks/lib; \
 		ln -s libxtasks-hwruntime.so libxtasks.so; popd;
 
@@ -51,9 +51,12 @@ nanos6-config-force: nanos6-bootstrap
 	cd nanos6-build;	\
 	../nanos6-fpga/configure --prefix=$(PREFIX_TARGET)/nanos6 \
 		--host=$(TARGET) \
-		--enable-fpga --with-xtasks=$(PREFIX_TARGET)/libxtasks \
+		--enable-fpga \
+		--enable-distributed \
+		--with-xtasks=$(PREFIX_TARGET)/libxtasks \
 		--with-symbol-resolution=indirect \
-		--disable-all-instrumentations --disable-discrete-deps \
+		--disable-all-instrumentations \
+		--disable-discrete-deps \
 		$(NANOS6_CONFIG_FLAGS)
 
 nanos6-config: xtasks-install
