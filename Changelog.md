@@ -1,3 +1,29 @@
+# Release 3.2.0-rc1
+
+2024-11-06
+
+* OmpSs-2@FPGA
+  * Added support for OMPIF inter-FPGA communication
+* ait
+  * Version 7.7.1
+  * Added support for ethernet subsystem and OMPIF accelerators
+  * Refactored clocks and resets
+  * Fixed issue adding register slices on instrumentation ports
+  * Fixed issue trying to simplify memory interconnection on HBM-based boards
+* nanos6
+  * Added OMPIF API functions
+  * Added `--enable-distributed` configuration flag to enable support for OMPIF API
+* llvm
+  * Added support for nanos6 OMPIF API
+* xtasks
+  * Version 17.4
+  * Added support for multi-node execution
+* xdma
+  * Version 4.9
+  * Added support for multi-node execution
+* ovni
+  * Fixed passing xtasks config file to ovniemu
+
 # Release 3.1.1
 
 2024-07-31
@@ -70,7 +96,7 @@
   * Added static register slices and constraints for `alveo_u200`, `alveo_u280`, `alveo_u280_hbm` and `alveo_u55c` boards
   * Added feature `power_monitor` to instantiate power monitoring infrastructure
   * Added feature `thermal_monitor` to instantiate thermal monitoring infrastructure
-  * Added `dump_board_info` argument  to dump board info JSON
+  * Added `dump_board_info` argument to dump board info JSON
   * Fixed HBM AXI resets
   * Excluded unused DDR address segments from address map
   * Fixed `datainterfaces_map` and `interconnect_priorities` features
@@ -83,6 +109,7 @@
   * Added support for multi-level nesting
 
 # Release 2.0.1
+
 2023-08-03
 
 * ait
@@ -96,6 +123,7 @@
   * Fixes on FPGAReverseOffload polling service
 
 # Release 2.0.0
+
 2023-06-28
 
 * ait
@@ -120,6 +148,7 @@
   * Updated encryption key
 
 # Release 1.0.1
+
 2023-03-06
 
 * ait
@@ -133,8 +162,8 @@
   * Version 6.1
   * Disable dependencies, reverse offload and task creation by default
 
-
 # Release 1.0.0
+
 2023-02-03
 
 Initial release of OmpSs-2@FPGA toolchain
