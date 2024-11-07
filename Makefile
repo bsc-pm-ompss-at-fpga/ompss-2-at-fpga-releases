@@ -33,12 +33,10 @@ xdma-install: xdma
 	$(MAKE) -j$(BUILDCPUS) -C xdma/src/$(XDMA_PLATFORM) install PREFIX=$(PREFIX_TARGET)/libxdma
 
 xtasks: xdma-install
-	$(MAKE) -j$(BUILDCPUS) -C xtasks/src/$(XTASKS_PLATFORM) LIBXDMA_DIR=$(PREFIX_TARGET)/libxdma
+	$(MAKE) -C xtasks/src/$(XTASKS_PLATFORM) LIBXDMA_DIR=$(PREFIX_TARGET)/libxdma
 
 xtasks-install: xtasks
-	$(MAKE) -j$(BUILDCPUS) -C xtasks/src/$(XTASKS_PLATFORM) install PREFIX=$(PREFIX_TARGET)/libxtasks LIBXDMA_DIR=$(PREFIX_TARGET)/libxdma
-	pushd $(PREFIX_TARGET)/libxtasks/lib; \
-		ln -s libxtasks-hwruntime.so libxtasks.so; popd;
+	$(MAKE) -C xtasks/src/$(XTASKS_PLATFORM) install PREFIX=$(PREFIX_TARGET)/libxtasks LIBXDMA_DIR=$(PREFIX_TARGET)/libxdma
 
 .PHONY: nanos6-bootstrap nanos6-config llvm-config nanos6-build nanos6-install
 
