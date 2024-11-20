@@ -1,6 +1,6 @@
-# Release 3.2.0-rc3
+# Release 3.2.0-rc4
 
-2024-11-07
+2024-11-20
 
 * OmpSs-2@FPGA
   * Added support for OMPIF inter-FPGA communication
@@ -10,6 +10,7 @@
   * Refactored clocks and resets
   * Fixed issue adding register slices on instrumentation ports
   * Fixed issue trying to simplify memory interconnection on HBM-based boards
+  * Added workaround to avoid a bug with Vivado IPCACHE
 * nanos6
   * Added OMPIF API functions
   * Added `--enable-distributed` configuration flag to enable support for OMPIF API
