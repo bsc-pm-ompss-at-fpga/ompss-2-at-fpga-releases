@@ -1,4 +1,4 @@
-# Release 3.2.0-rc6
+# Release 3.2.0-rc7
 
 2024-11-21
 
