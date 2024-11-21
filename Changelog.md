@@ -1,11 +1,11 @@
-# Release 3.2.0-rc4
+# Release 3.2.0-rc5
 
-2024-11-20
+2024-11-21
 
 * OmpSs-2@FPGA
   * Added support for OMPIF inter-FPGA communication
 * ait
-  * Version 7.7.1
+  * Version 7.7.2
   * Added support for ethernet subsystem and OMPIF accelerators
   * Refactored clocks and resets
   * Fixed issue adding register slices on instrumentation ports
