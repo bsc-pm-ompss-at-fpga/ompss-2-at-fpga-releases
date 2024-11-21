@@ -41,7 +41,7 @@ xtasks-install: xtasks
 .PHONY: ovni-config ovni-build ovni-install
 
 ovni-config:
-	mkdir ovni-build ; \
+	mkdir -p ovni-build ; \
 	cd ovni-build; \
 	cmake \
 	  -DCMAKE_INSTALL_PREFIX=$(PREFIX_TARGET)/libovni \
@@ -134,6 +134,7 @@ envscript-install: ait-install llvm-install xtasks-install
 
 clean:
 	if [ -d llvm-build ]; then rm llvm-build/CMakeCache.txt; fi
+	if [ -d ovni-build ]; then rm ovni-build/CMakeCache.txt; fi
 	if [ -d nanos6-build ]; then $(MAKE) -C nanos6-build clean; fi
 	$(MAKE) -C xdma/src/$(PLATFORM) clean
 	$(MAKE) -C xtasks/src/$(PLATFORM) clean
@@ -142,6 +143,7 @@ clean:
 mrproper: clean
 	rm -rf llvm-build 2>/dev/null
 	rm -rf nanos6-build 2>/dev/null
+	rm -rf ovni-build 2>/dev/null
 
 .PHONY: help
 
