@@ -9,7 +9,7 @@ ifndef TARGET
 endif
 
 ifndef PLATFORM
-	PLATFORM := zynq
+	PLATFORM := qdma
 endif
 
 ifndef XDMA_PLATFORM
@@ -22,7 +22,7 @@ endif
 
 export CROSS_COMPILE := $(TARGET)-
 
-all: xdma-install xtasks-install nanos6-install llvm-install ait-install envscript-install
+all: xdma-install xtasks-install ovni-install nanos6-install llvm-install ait-install envscript-install
 
 .PHONY: xdma xdma-install xtasks xtasks-install
 
@@ -38,7 +38,24 @@ xtasks: xdma-install
 xtasks-install: xtasks
 	$(MAKE) -C xtasks/src/$(XTASKS_PLATFORM) install PREFIX=$(PREFIX_TARGET)/libxtasks LIBXDMA_DIR=$(PREFIX_TARGET)/libxdma
 
-.PHONY: nanos6-bootstrap nanos6-config llvm-config nanos6-build nanos6-install
+.PHONY: ovni-config ovni-build ovni-install
+
+ovni-config:
+	mkdir ovni-build ; \
+	cd ovni-build; \
+	cmake \
+	  -DCMAKE_INSTALL_PREFIX=$(PREFIX_TARGET)/libovni \
+	  -DUSE_MPI=OFF \
+	  $(OVNI_CONFIG_FLAGS) \
+	../ovni
+
+ovni-build: ovni-config
+	make -j$(BUILDCPUS) -C ovni-build
+
+ovni-install: ovni-build
+	make -j$(BUILDCPUS) install -C ovni-build
+
+.PHONY: nanos6-bootstrap nanos6-config nanos6-build nanos6-install
 
 nanos6-bootstrap:
 	cd nanos6-fpga; 	\
@@ -51,10 +68,13 @@ nanos6-config-force: nanos6-bootstrap
 		--host=$(TARGET) \
 		--enable-fpga \
 		--enable-distributed \
-		--with-xtasks=$(PREFIX_TARGET)/libxtasks \
-		--with-symbol-resolution=indirect \
-		--disable-all-instrumentations \
 		--disable-discrete-deps \
+		--disable-all-instrumentations \
+		--enable-stats-instrumentation \
+		--enable-verbose-instrumentation \
+		--enable-ovni-instrumentation \
+		--with-xtasks=$(PREFIX_TARGET)/libxtasks \
+		--with-ovni=$(PREFIX_TARGET)/libovni \
 		$(NANOS6_CONFIG_FLAGS)
 
 nanos6-config: xtasks-install
@@ -128,8 +148,8 @@ mrproper: clean
 help:
 	@echo "Environment variables:"
 	@echo "  TARGET               Linux architecture that toolchain will target [def: native]"
-	@echo "  PLATFORM             Fallback board platform that xtasks and xdma backends will target if no specific one has been defined (e.g. zynq, qdma) [def: zynq]"
-	@echo "  XDMA_PLATFORM        Board platform that xdma backend will target (e.g. zynq, qdma, euroexa_maxilink) [def: PLATFORM]"
+	@echo "  PLATFORM             Fallback board platform that xtasks and xdma backends will target if no specific one has been defined (e.g. zynq, qdma) [def: qdma]"
+	@echo "  XDMA_PLATFORM        Board platform that xdma backend will target (e.g. zynq, qdma) [def: PLATFORM]"
 	@echo "  XTASKS_PLATFORM      Board platform that xtasks backend will target (e.g. zynq, qdma) [def: PLATFORM]"
 	@echo "  PREFIX_HOST          Installation prefix for the host tools (e.g. llvm, ait) [def: /]"
 	@echo "  PREFIX_TARGET        Installation prefix for the target tools (e.g. nanos6, libxdma) [def: /]"
@@ -139,6 +159,9 @@ help:
 	@echo "  xdma-install          Install xdma library"
 	@echo "  xtasks                Build xtasks library"
 	@echo "  xtasks-install        Install xtasks library"
+	@echo "  ovni-config           Ovni configuration"
+	@echo "  ovni-build            Build ovni"
+	@echo "  ovni-install          Install ovni"
 	@echo "  nanos6-bootstrap      Nanos6 configuration bootstrap"
 	@echo "  nanos6-config         Nanos6 configuration"
 	@echo "  nanos6-config-force   Force Nanos6 configuration"

@@ -177,6 +177,7 @@ RUN make \
     TARGET=aarch64-linux-gnu \
     PREFIX_TARGET=$INSTALLATION_PREFIX/arm64/ompss-2/${RELEASE_TAG} \
     PREFIX_HOST=$INSTALLATION_PREFIX/x86_64/ompss-2/${RELEASE_TAG} \
+    OVNI_CONFIG_FLAGS="-DCMAKE_C_COMPILER=aarch64-linux-gnu-gcc" \
     NANOS6_CONFIG_FLAGS="--with-libnuma=$INSTALLATION_PREFIX/arm64/libnuma --with-symbol-resolution=indirect" \
     hwloc_CFLAGS="-I$INSTALLATION_PREFIX/arm64/hwloc/include" \
     hwloc_LIBS="-L$INSTALLATION_PREFIX/arm64/hwloc/lib -lhwloc" \
@@ -189,6 +190,7 @@ RUN make \
     TARGET=arm-linux-gnueabihf \
     PREFIX_TARGET=$INSTALLATION_PREFIX/arm32/ompss-2/${RELEASE_TAG} \
     PREFIX_HOST=$INSTALLATION_PREFIX/x86_64/ompss-2/${RELEASE_TAG} \
+    OVNI_CONFIG_FLAGS="-DCMAKE_C_COMPILER=arm-linux-gnueabihf-gcc" \
     NANOS6_CONFIG_FLAGS="--with-libnuma=$INSTALLATION_PREFIX/arm32/libnuma --with-symbol-resolution=indirect" \
     hwloc_CFLAGS="-I$INSTALLATION_PREFIX/arm32/hwloc/include" \
     hwloc_LIBS="-L$INSTALLATION_PREFIX/arm32/hwloc/lib -lhwloc" \
@@ -223,6 +225,7 @@ USER ompss
 ADD --chmod=0775 --chown=ompss:ompss ./dockerImageFiles/example ./example/
 
 RUN echo "cat $INSTALLATION_PREFIX/welcome_ompss_fpga.txt" >>.bashrc \
+ && echo "export PATH=$INSTALLATION_PREFIX/x86_64/ompss-2/${RELEASE_TAG}/libxtasks/bin:\$PATH" >>.bashrc \
  && echo "export PATH=$INSTALLATION_PREFIX/x86_64/ompss-2/${RELEASE_TAG}/llvm/bin:\$PATH" >>.bashrc \
  && echo "export PATH=$INSTALLATION_PREFIX/x86_64/ompss-2/${RELEASE_TAG}/ait/bin:\$PATH" >>.bashrc \
  && echo "export PYTHONPATH=$INSTALLATION_PREFIX/x86_64/ompss-2/${RELEASE_TAG}/ait" >>.bashrc
