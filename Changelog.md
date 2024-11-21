@@ -1,4 +1,4 @@
-# Release 3.2.0-rc5
+# Release 3.2.0-rc6
 
 2024-11-21
 
@@ -17,7 +17,7 @@
 * llvm
   * Added support for nanos6 OMPIF API
 * xtasks
-  * Version 17.4
+  * Version 17.5
   * Added support for multi-node execution
 * xdma
   * Version 4.9
