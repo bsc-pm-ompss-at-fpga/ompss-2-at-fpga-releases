@@ -77,7 +77,7 @@ nanos6-config-force: nanos6-bootstrap
 		--with-ovni=$(PREFIX_TARGET)/libovni \
 		$(NANOS6_CONFIG_FLAGS)
 
-nanos6-config: xtasks-install
+nanos6-config: xtasks-install ovni-install
 	if [ ! -r nanos6-build/config.status ]; \
 	then	\
 		$(MAKE) nanos6-config-force; \
