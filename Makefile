@@ -136,8 +136,8 @@ clean:
 	if [ -d llvm-build ]; then rm llvm-build/CMakeCache.txt; fi
 	if [ -d ovni-build ]; then rm ovni-build/CMakeCache.txt; fi
 	if [ -d nanos6-build ]; then $(MAKE) -C nanos6-build clean; fi
-	$(MAKE) -C xdma/src/$(PLATFORM) clean
-	$(MAKE) -C xtasks/src/$(PLATFORM) clean
+	$(MAKE) -C xdma/src/$(XDMA_PLATFORM) clean
+	$(MAKE) -C xtasks/src/$(XTASKS_PLATFORM) clean
 	rm -f environment_ompss_2_fpga.sh 2>/dev/null
 
 mrproper: clean
