@@ -183,7 +183,9 @@ RUN make \
     hwloc_LIBS="-L$INSTALLATION_PREFIX/arm64/hwloc/lib -lhwloc" \
     PLATFORM=zynq \
     all \
- && make mrproper
+ && make \
+    PLATFORM=zynq \
+    mrproper
 
 #ARM32
 RUN make \
@@ -196,7 +198,9 @@ RUN make \
     hwloc_LIBS="-L$INSTALLATION_PREFIX/arm32/hwloc/lib -lhwloc" \
     PLATFORM=zynq \
     all \
- && make mrproper
+ && make \
+    PLATFORM=zynq \
+    mrproper
 
 #X86_64
 # We install x86_64 the last so the default target for clang is set to x86
@@ -205,7 +209,9 @@ RUN make \
     PREFIX_HOST=$INSTALLATION_PREFIX/x86_64/ompss-2/${RELEASE_TAG} \
     PLATFORM=qdma \
     all \
- && make mrproper
+ && make \
+    PLATFORM=zynq \
+    mrproper
 
 FROM build AS dist_img
 ARG INSTALLATION_PREFIX
