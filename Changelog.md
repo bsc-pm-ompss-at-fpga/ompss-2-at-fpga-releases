@@ -1,6 +1,6 @@
-# Release 3.2.0-rc9
+# Release 3.2.0
 
-2024-11-22
+2024-11-25
 
 * OmpSs-2@FPGA
   * Added support for OMPIF inter-FPGA communication
