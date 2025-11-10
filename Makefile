@@ -4,8 +4,18 @@ ifndef BUILDCPUS
 	BUILDCPUS := $(shell nproc)
 endif
 
-ifndef TARGET
-	TARGET := $(gcc -dumpmachine)
+ifndef TARGET_ARCH
+	TARGET := $(shell gcc -dumpmachine)
+else
+ifeq ($(TARGET_ARCH),arm64)
+	TARGET := aarch64-linux-gnu
+	export CROSS_COMPILE := $(TARGET)-
+else
+ifeq ($(TARGET_ARCH),arm32)
+	TARGET := arm-linux-gnueabihf
+	export CROSS_COMPILE := $(TARGET)-
+endif
+endif
 endif
 
 ifndef PLATFORM
@@ -20,7 +30,17 @@ ifndef XTASKS_PLATFORM
 	XTASKS_PLATFORM := $(PLATFORM)
 endif
 
-export CROSS_COMPILE := $(TARGET)-
+ifndef PREFIX
+	PREFIX := /opt/bsc
+endif
+
+ifndef PREFIX_TARGET
+	PREFIX_TARGET := $(PREFIX)
+endif
+
+ifndef PREFIX_HOST
+	PREFIX_HOST := $(PREFIX)
+endif
 
 all: xdma-install xtasks-install ovni-install nanos6-install llvm-install ait-install envscript-install
 
@@ -46,7 +66,7 @@ ovni-config:
 	cmake \
 	  -DCMAKE_INSTALL_PREFIX=$(PREFIX_TARGET)/libovni \
 	  -DUSE_MPI=OFF \
-	  $(OVNI_CONFIG_FLAGS) \
+	  -DCMAKE_C_COMPILER=$(CROSS_COMPILE)gcc \
 	../ovni
 
 ovni-build: ovni-config
@@ -116,9 +136,17 @@ llvm-install: llvm-build
 .PHONY: ait-install
 
 ait-install:
+ifeq ($(AIT_EXTRA_CONFIG),offline)
+	cd ait; \
+	export DEB_PYTHON_INSTALL_LAYOUT=deb_system; \
+	rm -rf $(PREFIX_HOST)/ait; \
+	python3 ./setup.py bdist_wheel; \
+	python3 -m pip install ./dist/ait_bsc-*.whl --no-index -t $(PREFIX_HOST)/ait
+else
 	export DEB_PYTHON_INSTALL_LAYOUT=deb_system; \
 	rm -rf $(PREFIX_HOST)/ait; \
 	python3 -m pip install ./ait -t $(PREFIX_HOST)/ait
+endif
 
 .PHONY: envscript-install
 
@@ -153,8 +181,8 @@ help:
 	@echo "  PLATFORM             Fallback board platform that xtasks and xdma backends will target if no specific one has been defined (e.g. zynq, qdma) [def: qdma]"
 	@echo "  XDMA_PLATFORM        Board platform that xdma backend will target (e.g. zynq, qdma) [def: PLATFORM]"
 	@echo "  XTASKS_PLATFORM      Board platform that xtasks backend will target (e.g. zynq, qdma) [def: PLATFORM]"
-	@echo "  PREFIX_HOST          Installation prefix for the host tools (e.g. llvm, ait) [def: /]"
-	@echo "  PREFIX_TARGET        Installation prefix for the target tools (e.g. nanos6, libxdma) [def: /]"
+	@echo "  PREFIX_HOST          Installation prefix for the host tools (e.g. llvm, ait) [def: /opt/bsc]"
+	@echo "  PREFIX_TARGET        Installation prefix for the target tools (e.g. nanos6, libxdma) [def: /opt/bsc]"
 	@echo "  BUILDCPUS            Number of processes used for building [def: nproc]"
 	@echo "Targets:"
 	@echo "  xdma                  Build xdma library"

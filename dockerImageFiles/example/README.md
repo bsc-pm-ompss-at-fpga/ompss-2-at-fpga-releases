@@ -11,19 +11,23 @@ The example comes with a Makefile that allows easily building the bitstream (and
 ##### Environment setup
 
 The environment variables that we may need to set up for the compilation process are:
- * `CROSS_COMPILE` [Def: ""] Cross compiler prefix. The docker image has the tool-chain supporting:
-   * `aarch64-linux-gnu-` (ARM 64bits).
-   * `arm-linux-gnueabihf-` (ARM 32bits).
- * `CFLAGS` [Def: ""] Compiler flags.
- * `LDFLAGS` [Def: ""] Linker flags.
- * `PETALINUX_BUILD` [Def: ""] Petalinux project directory (only needed when building boot files)
 
-**NOTE: Do not source petalinux and/or vivado settings as they may break toolchain configuration.**
+* `CROSS_COMPILE` [Def: ""] Cross compiler prefix. The docker image supports the following cross-compilers:
+  * `aarch64-linux-gnu-` (ARM 64bits).
+  * `arm-linux-gnueabihf-` (ARM 32bits).
+* `NANOS6_HOME` [Def: ""] Path to Nanos6 library to be used during compilation. The docker image has the following Nanos6 installations:
+  * `/opt/bsc/x86_64/ompss-2/RELEASE_TAG/nanos6/` (Will be used by default)
+  * `/opt/bsc/arm64/ompss-2/RELEASE_TAG/nanos6/`
+  * `/opt/bsc/arm32/ompss-2/RELEASE_TAG/nanos6/`
+* `CFLAGS` [Def: ""] Compiler flags.
+* `LDFLAGS` [Def: ""] Linker flags.
+* `PETALINUX_BUILD` [Def: ""] Petalinux project directory (only needed when building boot files)
 
 For example, we will set the following environment variables to build the example application for the ZCU102:
 
 ```bash
 export CROSS_COMPILE=aarch64-linux-gnu-
+export NANOS6_HOME=/opt/bsc/arm64/ompss-2/RELEASE_TAG/nanos6/
 ```
 
 ##### Bitstream
@@ -47,8 +51,6 @@ Assuming that Xilinx software version 2021.1 is available in `/opt/xilinx` folde
 ```bash
 export PATH=$PATH:/opt/xilinx/Vivado/2021.1/bin
 ```
-
-**NOTE: Do not source vivado settings as it may break the toolchain configuration.**
 
 ##### Boot Files
 
@@ -74,8 +76,9 @@ make dotprodut-p dotproduct-d dotproduct-i
 
 We should copy the files to the board and after that we can proceed with the following steps.
 The files should include at least:
- * dotproduct.bin (bitstream).
- * dotproduct-d, dotproduct-i, dotproduct-p (executables).
+
+* dotproduct.bin (bitstream).
+* dotproduct-d, dotproduct-i, dotproduct-p (executables).
 
 ##### Load the bitstream
 

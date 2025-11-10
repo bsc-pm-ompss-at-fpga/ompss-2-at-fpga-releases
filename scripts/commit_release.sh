@@ -9,7 +9,7 @@ VERSION=$1
 #NOTE: Ensure running in the repo root dir
 pushd $(dirname ${BASH_SOURCE[0]})/../ >/dev/null
 
-  CHANGELOG_VER=$(head -n1 Changelog.md | grep -oE "[0-9.]*(-rc[0-9]*)?")
+  CHANGELOG_VER=$(head -n1 Changelog.md | grep -oE "[0-9.]*(-alpha|-beta|-rc[0-9]*)?")
   if [ "$CHANGELOG_VER" != "$VERSION" ] ; then
     echo -e "ERROR:\tThe changelog version does not match the release version"
     column -t -s ':' <<< "
@@ -25,7 +25,7 @@ pushd $(dirname ${BASH_SOURCE[0]})/../ >/dev/null
   fi
 
   # Set user-guide URL
-  sed -i "s/\(user-guide-\)\([0-9]\|[.]\)*\(-rc[0-9]*\)\?/\1${VERSION}/" README.md
+  sed -i "s/\(user-guide-\)\([0-9]\|[.]\)*\(-alpha\|-beta\|-rc[0-9]*\)\?/\1${VERSION}/" README.md
 
   # Enable the cache mode for credentials in meta-repository and every submodule
   git config credential.helper cache
@@ -38,8 +38,8 @@ pushd $(dirname ${BASH_SOURCE[0]})/../ >/dev/null
     #git submodule foreach git push origin ompss-2-at-fpga-release/${VERSION}
     #git submodule foreach git credential-cache exit
 
-    git push origin --delete $(git tag --list '[0-9]\.[0-9]\.[0-9]-rc[0-9]*')
-    git tag --delete $(git tag --list '[0-9]\.[0-9]\.[0-9]-rc[0-9]*')
+    git tag --list '[0-9]\.[0-9]\.[0-9]-rc[0-9]*' | xargs --no-run-if-empty git push origin --delete
+    git tag --list '[0-9]\.[0-9]\.[0-9]-rc[0-9]*' | xargs --no-run-if-empty git tag --delete
   fi
 
   # Stash the updated subrepos and commit the changes + create the tag

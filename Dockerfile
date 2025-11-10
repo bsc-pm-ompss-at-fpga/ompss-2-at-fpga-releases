@@ -101,7 +101,7 @@ ARG RELEASE_TAG
 #LIBNUMA
 WORKDIR /tmp/work/
 
-ARG numactl_ver=2.0.18
+ARG numactl_ver=2.0.19
 RUN wget "https://github.com/numactl/numactl/releases/download/v${numactl_ver}/numactl-${numactl_ver}.tar.gz" \
  && tar -zxf numactl-${numactl_ver}.tar.gz \
  && rm numactl-${numactl_ver}.tar.gz
@@ -109,9 +109,6 @@ RUN wget "https://github.com/numactl/numactl/releases/download/v${numactl_ver}/n
 WORKDIR /tmp/work/numactl-${numactl_ver}
 
 RUN autoreconf -ifv
-
-# We need to patch syscall.c to add arm32 set_mempolicy_home_node syscall number (450)
-RUN sed -Ei '144s/(.*)/\1\ \|\|\ defined\(__arm__\)/' syscall.c
 
 #ARM64
 RUN ./configure --prefix=$INSTALLATION_PREFIX/arm64/libnuma --host=aarch64-linux-gnu \
@@ -131,12 +128,13 @@ RUN ./configure --prefix=$INSTALLATION_PREFIX/x86_64/libnuma --host=x86_64-linux
 #HWLOC
 WORKDIR /tmp/work/
 
-ARG hwloc_ver=2.9.3
-RUN wget "https://download.open-mpi.org/release/hwloc/v2.9/hwloc-${hwloc_ver}.tar.gz" \
- && tar -zxf hwloc-${hwloc_ver}.tar.gz \
- && rm hwloc-${hwloc_ver}.tar.gz
+ARG hwloc_ver_long=2.12.2
+ARG hwloc_ver_short=2.12
+RUN wget "https://download.open-mpi.org/release/hwloc/v${hwloc_ver_short}/hwloc-${hwloc_ver_long}.tar.gz" \
+ && tar -zxf hwloc-${hwloc_ver_long}.tar.gz \
+ && rm hwloc-${hwloc_ver_long}.tar.gz
 
-WORKDIR /tmp/work/hwloc-${hwloc_ver}
+WORKDIR /tmp/work/hwloc-${hwloc_ver_long}
 
 RUN autoreconf -ifv
 
@@ -174,10 +172,9 @@ WORKDIR /tmp/work
 
 #ARM64
 RUN make \
-    TARGET=aarch64-linux-gnu \
+    TARGET_ARCH=arm64 \
     PREFIX_TARGET=$INSTALLATION_PREFIX/arm64/ompss-2/${RELEASE_TAG} \
     PREFIX_HOST=$INSTALLATION_PREFIX/x86_64/ompss-2/${RELEASE_TAG} \
-    OVNI_CONFIG_FLAGS="-DCMAKE_C_COMPILER=aarch64-linux-gnu-gcc" \
     NANOS6_CONFIG_FLAGS="--with-libnuma=$INSTALLATION_PREFIX/arm64/libnuma --with-symbol-resolution=indirect" \
     hwloc_CFLAGS="-I$INSTALLATION_PREFIX/arm64/hwloc/include" \
     hwloc_LIBS="-L$INSTALLATION_PREFIX/arm64/hwloc/lib -lhwloc" \
@@ -189,10 +186,9 @@ RUN make \
 
 #ARM32
 RUN make \
-    TARGET=arm-linux-gnueabihf \
+    TARGET_ARCH=arm32 \
     PREFIX_TARGET=$INSTALLATION_PREFIX/arm32/ompss-2/${RELEASE_TAG} \
     PREFIX_HOST=$INSTALLATION_PREFIX/x86_64/ompss-2/${RELEASE_TAG} \
-    OVNI_CONFIG_FLAGS="-DCMAKE_C_COMPILER=arm-linux-gnueabihf-gcc" \
     NANOS6_CONFIG_FLAGS="--with-libnuma=$INSTALLATION_PREFIX/arm32/libnuma --with-symbol-resolution=indirect" \
     hwloc_CFLAGS="-I$INSTALLATION_PREFIX/arm32/hwloc/include" \
     hwloc_LIBS="-L$INSTALLATION_PREFIX/arm32/hwloc/lib -lhwloc" \
