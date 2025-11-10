@@ -5,23 +5,41 @@ This meta-repository contains the official OmpSs-2@FPGA releases.
 This repository uses submodules to link against the different OmpSs-2@FPGA tools. To download all the submodules when cloning this repository, you might use:
 
 * When cloning from GitHub:
+
 ```bash
     git clone --recursive https://github.com/bsc-pm-ompss-at-fpga/ompss-2-at-fpga-releases.git
 ```
 
 * When cloning from our internal GitLab repository (BSC users only):
+
 ```bash
     git clone --recursive https://gitlab.bsc.es/ompss-at-fpga/ompss-2-at-fpga-releases.git
 ```
 
 To obtain further information about each tool, visit the README of each tool.
-For general information, visit the [OmpSs-2@FPGA User Guide](https://pm.bsc.es/ftp/ompss-2-at-fpga/doc/user-guide-3.2.0/index.html#ompss-2-fpga-user-guide).
+For general information, visit the [OmpSs-2@FPGA User Guide](https://pm.bsc.es/ftp/ompss-2-at-fpga/doc/user-guide-4.0.0-alpha/index.html#ompss-2-fpga-user-guide).
+
+
+### Install
+
+To install the release with the default parameters run:
+
+```bash
+git clone --recursive https://github.com/bsc-pm-ompss-at-fpga/ompss-2-at-fpga-releases.git
+cd ompss-2-at-fpga-releases
+export PREFIX=/opt/bsc/ompss-2
+export PLATFORM=qdma
+make
+```
+
+Or follow the instructions on [how to install](https://pm.bsc.es/ftp/ompss-2-at-fpga/doc/user-guide-4.0.0-alpha/install-toolchain.html) OmpSs-2@FPGA.
 
 
 ### Build docker image
 
 To build the docker image, you just need to recursively clone and the repository and recursively checkout the desired version.
 After that, you might run the following docker command in the root repository directory (to create the `ompss_2_at_fpga` docker image with the `unknwn` tag):
+
 ```bash
 docker build --squash -t "ompss_2_at_fpga:unknwn" --force-rm .
 ```
