@@ -17,7 +17,7 @@ This repository uses submodules to link against the different OmpSs-2@FPGA tools
 ```
 
 To obtain further information about each tool, visit the README of each tool.
-For general information, visit the [OmpSs-2@FPGA User Guide](https://pm.bsc.es/ftp/ompss-2-at-fpga/doc/user-guide-4.0.0-alpha/index.html#ompss-2-fpga-user-guide).
+For general information, visit the [OmpSs-2@FPGA User Guide](https://pm.bsc.es/ftp/ompss-2-at-fpga/doc/user-guide-4.0.0/index.html#ompss-2-fpga-user-guide).
 
 
 ### Install
@@ -32,7 +32,7 @@ export PLATFORM=qdma
 make
 ```
 
-Or follow the instructions on [how to install](https://pm.bsc.es/ftp/ompss-2-at-fpga/doc/user-guide-4.0.0-alpha/install-toolchain.html) OmpSs-2@FPGA.
+Or follow the instructions on [how to install](https://pm.bsc.es/ftp/ompss-2-at-fpga/doc/user-guide-4.0.0/install-toolchain.html) OmpSs-2@FPGA.
 
 
 ### Build docker image

@@ -1,6 +1,63 @@
-# Release 4.0.0-alpha
-2025-11-10
+# Release 4.0.0
+2025-12-19
 
+* ait 
+  * Version 8.1.0
+  * Updated bitinfo to v15
+  * Internal refactor
+  * Removed arguments:
+    * `datainterfaces_map`, `debug_intfs`, `debug_intfs_list`, `disable_creator_ports`, `floorplanning_constr`, `interconnect_regslice`, `simplify_interconnection` and `slr_slices`
+  * Added arguments:
+    * `disable_static_constraints`, `interconnect_regslices` and `user_config`
+  * Implemented user configuration json to allow for fine-grain configuration
+  * Default value for argument `interconnect_opt` changed from `area` to `performance`
+  * Constraints and register slices for static logic enabled by default, added an argument to disable them
+  * Added information about memory size in the bitinfo
+  * Added workaround to avoid a bug when adding System ILAs automatically in a Vivado design
+  * Remove memory interleaving limitation
+  * Fixed detecting modified sources when installing
+  * Removed `simulation` board
+* Clang 
+  * Add support for the IMP model
+  * Update OMPIF API
+  * Updated format of generated json for AIT
+  * Fix incompatible pointer types in some OMPIF primitives
+  * Fix a crash when calling data copies API inside a nested task
+  * Fix task definitions are not emitted to HLS when they are declared (but not defined) in a different file
+  * Fix unknown pointer conversion in function calls inside a task
+  * Fix copies being emitted in a random order each compilation
+  * Fix ignored point dependencies containing array references being ignored
+  * Fix task definitions not being emitted if were declared in a different file
+* xtasks
+  * Version 17.10
+  * Added function to retrieve available board memory from bitinfo
+  * Added scripts to read pom registers
+  * Add parameter to diable event invalidation on QDMA backend
+  * Fixed wrong environment variable on error message
+  * Updated read_bitinfo text
+* xdma
+  * Version 4.10
+  * Added functions to set the available board memory for discrete devices
+* ovni
+  * Updated to upstream version 1.12.0
+* IPs
+  * Picos OmpSs Manager
+    * Version 7.5
+    * Fix task affinity not being honored
+  * Task spawner
+    * Version 2.2
+    * Added support for IMP
+    * Fix send/receive task affinity not being properly set
+  * Instrumentation adapter
+    * Version 2.1
+    * Changed layout of event struct
+    * Make num_events bits configurable
+  * OMPIF - Message receiver
+    * Version 1.3
+  * OMPIF - Message sender
+    * Version 1.3
+  * OMPIF - Packet decoder
+    * Version 1.1
 
 # Release 3.2.0
 
