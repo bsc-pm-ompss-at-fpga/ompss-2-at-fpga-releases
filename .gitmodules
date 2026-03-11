@@ -20,3 +20,6 @@
 	path = ovni
 	url = ../ovni.git
 	branch = master
+[submodule "dockerImageFiles/example"]
+	path = dockerImageFiles/example
+	url = ../dotproduct.git

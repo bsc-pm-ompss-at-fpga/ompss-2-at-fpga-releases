@@ -1,8 +1,5 @@
 SHELL := /bin/bash
-
-ifndef BUILDCPUS
-	BUILDCPUS := $(shell nproc)
-endif
+BUILDCPUS ?= $(shell nproc)
 
 ifndef TARGET_ARCH
 	TARGET := $(shell gcc -dumpmachine)
@@ -18,29 +15,13 @@ endif
 endif
 endif
 
-ifndef PLATFORM
-	PLATFORM := qdma
-endif
+PLATFORM ?= qdma
+XDMA_PLATFORM ?= $(PLATFORM)
+XTASKS_PLATFORM ?= $(PLATFORM)
 
-ifndef XDMA_PLATFORM
-	XDMA_PLATFORM := $(PLATFORM)
-endif
-
-ifndef XTASKS_PLATFORM
-	XTASKS_PLATFORM := $(PLATFORM)
-endif
-
-ifndef PREFIX
-	PREFIX := /opt/bsc
-endif
-
-ifndef PREFIX_TARGET
-	PREFIX_TARGET := $(PREFIX)
-endif
-
-ifndef PREFIX_HOST
-	PREFIX_HOST := $(PREFIX)
-endif
+PREFIX ?= /opt/bsc
+PREFIX_TARGET ?= $(PREFIX)
+PREFIX_HOST ?= $(PREFIX)
 
 all: xdma-install xtasks-install ovni-install nanos6-install llvm-install ait-install envscript-install
 

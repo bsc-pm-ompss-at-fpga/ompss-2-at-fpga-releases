@@ -1,3 +1,26 @@
+# Release 4.0.1
+2026-03-10
+
+* ait
+  * Version 8.2.1
+  * Updated bitinfo to v16
+  * Fixed IMP not beig enabled
+  * Added IMP flag to the bitinfo feature bitmap
+  * Fixed printing color codes on non-TTY stdouts
+* llvm
+  * Add missing operators to the mcxx_pointer type to support functions and local arrays
+  * Properly initialize mcxx_ptr when converting from local storage pointer
+* xtasks
+  * Version 17.11
+  * Added information about IMP in `read_bitinfo`
+* ovni
+  * Updated to upstream version 1.13.0
+  * Fixed error when using `-x xtasksfile` option
+* IPs
+  * OMPIF - Message sender
+    * Version 1.4
+    * Fixed MAX_RETRIES register overflow
+
 # Release 4.0.0
 2025-12-19
 

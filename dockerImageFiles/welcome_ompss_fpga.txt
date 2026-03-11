@@ -14,7 +14,7 @@
 |                                                                                 |
 |    - Welcome to the OmpSs-2@FPGA docker image                                   |
 |    - LLVM/Clang and AIT tools are available in the PATH                         |
-|    - Please, add vivado and vivado_hls in the PATH to make them available       |
+|    - Please, add vivado and vitis_hls in the PATH to make them available        |
 |      for ait                                                                    |
 |                                                                                 |
 |    - Please contact ompss-fpga-support@bsc.es for questions                     |

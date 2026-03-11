@@ -2,71 +2,44 @@ ARG DEBIAN_FRONTEND="noninteractive"
 ARG INSTALLATION_PREFIX=/opt/bsc
 ARG RELEASE_TAG
 
-FROM ubuntu:22.04 AS base
+FROM ubuntu:24.04 AS base
 ARG INSTALLATION_PREFIX
 ARG RELEASE_TAG
 LABEL AUTHOR="Programming Models Group at BSC <ompss-fpga-support@bsc.es> (https://pm.bsc.es/ompss-at-fpga)"
 RUN apt-get update && apt-get install -y -q \
 # Common
+        ack \
         autoconf \
         automake \
-        build-essential \
-        ca-certificates \
-        curl \
+        locales \
         gperf \
         git \
-        libtool \
-        pkg-config \
+        openssh-client \
+        rsync \
         sudo \
         vim \
         wget \
 # llvm
         cmake \
-        clang-12 \
-        clang++-12 \
-        lld-12 \
+        clang \
+        llvm \
+        lld \
         ninja-build \
 # AIT
         python3 \
         python3-pip \
+        python3-setuptools \
+        python3-wheel \
 # Nanos6
-        libboost-all-dev \
+        libboost-dev \
+        libtool \
+        libnuma-dev \
+        pkg-config \
 # Needed by Xilinx tools
-        libgtk2.0-0 \
-        libncurses5 \
-        libx11-6 \
-        libxext6 \
-        libxrender1 \
-        libxtst6 \
-        procps \
-# Needed by Petalinux tools
-        bc \
-        chrpath \
-        cpio \
-        diffstat \
-        gawk \
-        gnupg \
-        gnupg-agent \
-        libncurses5-dev \
-        libtool-bin \
-        locales \
-        lsb-release \
-        net-tools \
-        rsync \
-        socat \
-        texinfo \
-        unzip \
-        xterm \
-        zlib1g-dev \
-# Extra tools
-        openssh-client
+        libtinfo6 \
+        libxrender1
 
-RUN update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-12 80 \
- && update-alternatives --install /usr/bin/clang clang /usr/bin/clang-12 80  \
- && update-alternatives --install /usr/bin/lld lld /usr/bin/lld-12 80 \
- && python3 -m pip install pip --upgrade \
- && python3 -m pip install wheel --upgrade \
- && python3 -m pip install setuptools --upgrade \
+RUN ln -s /usr/lib/x86_64-linux-gnu/libtinfo.so /usr/lib/x86_64-linux-gnu/libtinfo.so.5 \
  && export DEBIAN_FRONTEND=noninteractive \
  && export DEBCONF_NONINTERACTIVE_SEEN=true \
  && echo 'tzdata tzdata/Areas select Etc' | debconf-set-selections \
@@ -92,7 +65,7 @@ RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen \
 ENV LANG en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
 
-FROM base as build
+FROM base AS build
 ARG INSTALLATION_PREFIX
 ARG RELEASE_TAG
 

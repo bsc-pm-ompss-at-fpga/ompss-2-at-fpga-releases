@@ -19,7 +19,7 @@ pushd $(dirname ${BASH_SOURCE[0]})/../ >/dev/null
   fi
 
   CHANGELOG_DIFF=$(git diff Changelog.md)
-  if [ "x$CHANGELOG_DIFF" == "x" ]; then
+  if [ "$CHANGELOG_DIFF" == "" ]; then
     echo -e "ERROR:\tThe changelog does not contain the release changes"
     exit 0
   fi
@@ -43,10 +43,11 @@ pushd $(dirname ${BASH_SOURCE[0]})/../ >/dev/null
   fi
 
   # Stash the updated subrepos and commit the changes + create the tag
-  git add ait llvm nanos6-fpga ompss-at-fpga-kernel-module xdma xtasks ovni Changelog.md README.md
+  git add dockerImageFiles/example ait llvm nanos6-fpga ompss-at-fpga-kernel-module xdma xtasks ovni Changelog.md README.md
   git commit -m "OmpSs-2-at-FPGA release ${VERSION}"
   git tag ${VERSION}
-  git push origin master ${VERSION}
+  git push origin HEAD
+  git push origin ${VERSION}
 
   # Clear the credentials cache
   git credential-cache exit
